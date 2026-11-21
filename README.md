@@ -16,6 +16,10 @@
   - Desktop wheel listener maps trackpad/mouse scroll wheels to smooth horizontal scrolling.
   - Automatically scrolls the tray to center the next unplaced subpart whenever a component is assembled.
 
+- **Playful Cartoon Sound Effects (OK & NOK):**
+  - **OK (Snap Success):** Rotates dynamically across 4 humorous cartoon audio effects — *Juicy Bubble Pop ("Bloop-POP!")*, *Spring Boing ("Boi-i-ing!")*, *Slide Whistle Up ("Wheee-Ding!")*, and *Playful Marimba Double-Pop ("Pip-Pop!")*.
+  - **NOK (Misplacement / Fail):** Replaces harsh buzzes with 4 comedic cartoon fails — *Classic Sad Trombone ("Womp... WOMP...")*, *Spring Unwind ("Pwaaa-ooong!")*, *Balloon Squeak / Raspberry ("Pfffft-blrt!")*, and *Clown Horn ("Honk-Honk!")*.
+
 - **AudioContext Autoplay Compliance:**
   - Lazily initializes Web Audio oscillators on the first user interaction, eliminating browser console autoplay policy warnings while ensuring immediate, reliable sound synthesis.
 
