@@ -491,6 +491,13 @@
       margin-bottom: 7px;
     }
 
+    .tray-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
     .tray-title {
       font-size: 12px;
       font-weight: 800;
@@ -498,6 +505,19 @@
       letter-spacing: 0.5px;
       color: var(--text-muted);
       flex-shrink: 0;
+    }
+
+    .tray-count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #e2e8f0;
+      color: var(--text-muted);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 10px;
+      line-height: 1.3;
     }
 
     .tray-helper {
@@ -510,13 +530,102 @@
       white-space: nowrap;
     }
 
+    .tray-scroll-container {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .tray-scroll-container::before,
+    .tray-scroll-container::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 32px;
+      pointer-events: none;
+      z-index: 12;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .tray-scroll-container::before {
+      left: 0;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0));
+    }
+
+    .tray-scroll-container::after {
+      right: 0;
+      background: linear-gradient(to left, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0));
+    }
+
+    .tray-scroll-container.can-scroll-left::before {
+      opacity: 1;
+    }
+
+    .tray-scroll-container.can-scroll-right::after {
+      opacity: 1;
+    }
+
+    .tray-scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1.5px solid var(--border);
+      color: var(--primary);
+      font-size: 20px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 15;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+      transition: opacity 0.2s ease, transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+      user-select: none;
+      -webkit-user-select: none;
+      opacity: 0;
+      pointer-events: none;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .tray-scroll-btn:hover {
+      background: #eff6ff;
+      border-color: var(--primary);
+    }
+
+    .tray-scroll-btn:active {
+      transform: translateY(-50%) scale(0.92);
+    }
+
+    .tray-scroll-btn.prev {
+      left: 2px;
+    }
+
+    .tray-scroll-btn.next {
+      right: 2px;
+    }
+
+    .tray-scroll-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     .parts-tray {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 8px;
       max-width: 1240px;
+      width: 100%;
       margin: 0 auto;
+      scroll-behavior: smooth;
     }
 
     .part-slot {
@@ -533,7 +642,22 @@
       position: relative;
       cursor: grab;
       transition: all 0.18s ease;
-      touch-action: none;
+      touch-action: pan-x;
+      user-select: none;
+      -webkit-user-select: none;
+      outline: none;
+    }
+
+    .part-slot:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .part-slot.selected {
+      border-color: var(--primary) !important;
+      background: #eff6ff !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35), 0 6px 14px rgba(37, 99, 235, 0.15) !important;
+      transform: translateY(-2px);
     }
 
     .part-slot:hover:not(.placed):not(.room-checklist-slot) {
@@ -896,15 +1020,31 @@
         font-size: 10.5px;
       }
 
+      .tray-scroll-container {
+        padding: 0 2px;
+      }
+
+      .tray-scroll-btn {
+        width: 26px;
+        height: 38px;
+        font-size: 18px;
+        opacity: 0;
+      }
+
       .parts-tray {
         flex-wrap: nowrap;
         justify-content: flex-start;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x proximity;
         scrollbar-width: none;
-        padding-bottom: 2px;
-        gap: 7px;
+        -ms-overflow-style: none;
+        padding: 4px 12px 6px;
+        gap: 8px;
+        touch-action: pan-x;
       }
 
       .parts-tray::-webkit-scrollbar {
@@ -913,10 +1053,12 @@
 
       .part-slot {
         flex: 0 0 auto;
-        width: 92px;
-        height: 82px;
+        width: 94px;
+        height: 84px;
         padding: 5px 4px;
         border-radius: 10px;
+        scroll-snap-align: center;
+        touch-action: pan-x;
       }
 
       .part-slot.room-checklist-slot {
@@ -1105,10 +1247,17 @@
 
   <section class="tray-wrapper">
     <div class="tray-header">
-      <span class="tray-title" id="tray-title-text">Component Tray</span>
+      <div class="tray-header-left">
+        <span class="tray-title" id="tray-title-text">Component Tray</span>
+        <span class="tray-count-badge" id="tray-count-badge">0 / 3</span>
+      </div>
       <span class="tray-helper" id="tray-helper-text">Drag each component to its matching position on the blueprint.</span>
     </div>
-    <div class="parts-tray" id="parts-tray"></div>
+    <div class="tray-scroll-container" id="tray-scroll-container">
+      <button class="tray-scroll-btn prev" id="tray-scroll-prev" type="button" aria-label="Scroll parts left" title="Scroll left" tabindex="-1">‹</button>
+      <div class="parts-tray" id="parts-tray" role="listbox" aria-label="Components tray"></div>
+      <button class="tray-scroll-btn next" id="tray-scroll-next" type="button" aria-label="Scroll parts right" title="Scroll right" tabindex="-1">›</button>
+    </div>
   </section>
 
   <div id="drag-ghost"></div>
@@ -1130,62 +1279,86 @@
   </div>
 
   <script>
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playSound(type) {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      const now = audioCtx.currentTime;
-
-      if (type === 'pickup') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(320, now);
-        osc.frequency.exponentialRampToValueAtTime(520, now + 0.08);
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-        osc.start(now);
-        osc.stop(now + 0.08);
-      } else if (type === 'rotate') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(440, now);
-        osc.frequency.exponentialRampToValueAtTime(600, now + 0.07);
-        gain.gain.setValueAtTime(0.1, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
-        osc.start(now);
-        osc.stop(now + 0.07);
-      } else if (type === 'snap') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, now);
-        osc.frequency.setValueAtTime(659.25, now + 0.06);
-        gain.gain.setValueAtTime(0.18, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
-        osc.start(now);
-        osc.stop(now + 0.22);
-      } else if (type === 'error') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(180, now);
-        osc.frequency.linearRampToValueAtTime(130, now + 0.18);
-        gain.gain.setValueAtTime(0.12, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
-        osc.start(now);
-        osc.stop(now + 0.18);
-      } else if (type === 'win') {
-        const notes = [523.25, 659.25, 783.99, 1046.50];
-        notes.forEach((freq, i) => {
-          const o = audioCtx.createOscillator();
-          const g = audioCtx.createGain();
-          o.type = 'triangle';
-          o.connect(g);
-          g.connect(audioCtx.destination);
-          o.frequency.setValueAtTime(freq, now + i * 0.09);
-          g.gain.setValueAtTime(0.15, now + i * 0.09);
-          g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.35);
-          o.start(now + i * 0.09);
-          o.stop(now + i * 0.09 + 0.35);
-        });
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtxClass) {
+          audioCtx = new AudioCtxClass();
+        }
       }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+      return audioCtx;
+    }
+
+    const unlockAudio = () => {
+      getAudioContext();
+      window.removeEventListener('pointerdown', unlockAudio);
+      window.removeEventListener('keydown', unlockAudio);
+    };
+    window.addEventListener('pointerdown', unlockAudio, { passive: true });
+    window.addEventListener('keydown', unlockAudio, { passive: true });
+
+    function playSound(type) {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        if (type === 'pickup') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(520, now + 0.08);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } else if (type === 'rotate') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(600, now + 0.07);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+          osc.start(now);
+          osc.stop(now + 0.07);
+        } else if (type === 'snap') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.06);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+          osc.start(now);
+          osc.stop(now + 0.22);
+        } else if (type === 'error') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(180, now);
+          osc.frequency.linearRampToValueAtTime(130, now + 0.18);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          osc.start(now);
+          osc.stop(now + 0.18);
+        } else if (type === 'win') {
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, i) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = 'triangle';
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.frequency.setValueAtTime(freq, now + i * 0.09);
+            g.gain.setValueAtTime(0.15, now + i * 0.09);
+            g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.35);
+            o.start(now + i * 0.09);
+            o.stop(now + i * 0.09 + 0.35);
+          });
+        }
+      } catch (err) {}
     }
 
     const LEVELS = [
@@ -2114,9 +2287,53 @@
       }
     }
 
+    const STORAGE_KEY_COMPLETED = 'assembly_lab_completed';
+    const STORAGE_KEY_CURRENT = 'assembly_lab_current';
+
+    function getSavedCompletedLevels() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY_COMPLETED);
+        return data ? JSON.parse(data) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveCompletedLevel(lvlNum) {
+      try {
+        const completed = getSavedCompletedLevels();
+        if (!completed.includes(lvlNum)) {
+          completed.push(lvlNum);
+          localStorage.setItem(STORAGE_KEY_COMPLETED, JSON.stringify(completed));
+        }
+      } catch (e) {}
+    }
+
+    function saveCurrentLevelIndex(idx) {
+      try {
+        localStorage.setItem(STORAGE_KEY_CURRENT, String(idx));
+      } catch (e) {}
+    }
+
+    function getSavedCurrentLevelIndex() {
+      try {
+        const val = localStorage.getItem(STORAGE_KEY_CURRENT);
+        if (val !== null) {
+          const parsed = parseInt(val, 10);
+          if (!isNaN(parsed) && parsed >= 0 && parsed < LEVELS.length) {
+            return parsed;
+          }
+        }
+      } catch (e) {}
+      return 0;
+    }
+
     let currentLevelIndex = 0;
     let partsState = [];
     let draggingPart = null;
+    let selectedPartId = null;
+    let touchState = null;
+    let mouseDragState = null;
     let silhouetteTimer = null;
     let riddleHintStage = 0;
     let activeHintPartId = null;
@@ -2129,6 +2346,10 @@
     const beaconLayer = document.getElementById('beacon-layer');
     const silhouetteEl = document.getElementById('silhouette-layer');
     const trayEl = document.getElementById('parts-tray');
+    const trayScrollContainer = document.getElementById('tray-scroll-container');
+    const trayScrollPrev = document.getElementById('tray-scroll-prev');
+    const trayScrollNext = document.getElementById('tray-scroll-next');
+    const trayCountBadge = document.getElementById('tray-count-badge');
     const ghostEl = document.getElementById('drag-ghost');
     const factDisplay = document.getElementById('fact-display');
     const hintBtn = document.getElementById('hint-btn');
@@ -2150,15 +2371,56 @@
       return isTouchDevice() ? -52 : 0;
     }
 
+    function updateTrayScrollIndicators() {
+      if (!trayEl || !trayScrollContainer) return;
+      const canScrollLeft = trayEl.scrollLeft > 6;
+      const canScrollRight = trayEl.scrollLeft < (trayEl.scrollWidth - trayEl.clientWidth - 6);
+
+      trayScrollContainer.classList.toggle('can-scroll-left', canScrollLeft);
+      trayScrollContainer.classList.toggle('can-scroll-right', canScrollRight);
+
+      if (trayScrollPrev) trayScrollPrev.classList.toggle('visible', canScrollLeft);
+      if (trayScrollNext) trayScrollNext.classList.toggle('visible', canScrollRight);
+    }
+
+    if (trayEl) {
+      trayEl.addEventListener('scroll', updateTrayScrollIndicators, { passive: true });
+      trayEl.addEventListener('wheel', (e) => {
+        if (trayEl.scrollWidth > trayEl.clientWidth) {
+          if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            trayEl.scrollLeft += e.deltaY;
+            e.preventDefault();
+          }
+        }
+      }, { passive: false });
+    }
+
+    if (trayScrollPrev) {
+      trayScrollPrev.addEventListener('click', () => {
+        trayEl.scrollBy({ left: -160, behavior: 'smooth' });
+      });
+    }
+
+    if (trayScrollNext) {
+      trayScrollNext.addEventListener('click', () => {
+        trayEl.scrollBy({ left: 160, behavior: 'smooth' });
+      });
+    }
+
+    window.addEventListener('resize', updateTrayScrollIndicators, { passive: true });
+
     function refreshLevelDropdown() {
       const savedVal = levelSelect.value;
+      const completedList = getSavedCompletedLevels();
       levelSelect.innerHTML = '';
       LEVELS.forEach((lvl, idx) => {
         const rules = getLevelRules(lvl.levelNumber);
         const opt = document.createElement('option');
         opt.value = idx;
+        const isCompleted = completedList.includes(lvl.levelNumber);
+        const check = isCompleted ? '✓ ' : '';
         const displayName = rules.mysteryObject ? '??? (Mystery Object)' : lvl.name;
-        opt.textContent = `Level ${lvl.levelNumber}: ${displayName}`;
+        opt.textContent = `${check}Level ${lvl.levelNumber}: ${displayName}`;
         levelSelect.appendChild(opt);
       });
       if (savedVal !== '') levelSelect.value = savedVal;
@@ -2167,6 +2429,7 @@
 
     function loadLevel(index) {
       currentLevelIndex = Math.max(0, Math.min(LEVELS.length - 1, index));
+      saveCurrentLevelIndex(currentLevelIndex);
       const level = LEVELS[currentLevelIndex];
       const rules = getLevelRules(level.levelNumber);
 
@@ -2175,6 +2438,11 @@
       riddleHintStage = 0;
       activeHintPartId = null;
       failedAttempts = 0;
+      selectedPartId = null;
+      draggingPart = null;
+      touchState = null;
+      mouseDragState = null;
+      ghostEl.style.display = 'none';
       beaconLayer.innerHTML = '';
 
       levelSelect.value = currentLevelIndex;
@@ -2228,6 +2496,9 @@
       renderTray(rules);
       updateProgress();
 
+      if (trayEl) trayEl.scrollLeft = 0;
+      setTimeout(updateTrayScrollIndicators, 120);
+
       if (rules.roomScavenger) {
         showFact(`🔍 New Room Layout: Find the ${level.parts.length} parts hidden around the bedroom and drag them onto the mat!`, false);
       } else if (rules.mysteryObject) {
@@ -2245,7 +2516,7 @@
         hintBtn.textContent = '💡 No Hint';
         ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span class="rule-text-detail">Silhouette visible • Any order • Pre-aligned</span>`;
         trayTitleText.textContent = 'Component Tray';
-        trayHelperText.textContent = 'Drag each part onto its matching outline.';
+        trayHelperText.textContent = 'Drag or tap a part onto its matching outline.';
       } else if (rules.hintMode === 'peek') {
         silhouetteEl.classList.remove('silhouette-visible');
         silhouetteEl.classList.add('silhouette-hidden');
@@ -2261,7 +2532,7 @@
         hintBtn.textContent = '🧭 Angles';
         ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span class="rule-text-detail">Random angles • Tap part or ↻ to rotate</span>`;
         trayTitleText.textContent = 'Component Tray';
-        trayHelperText.textContent = 'Tap a part or ↻ to rotate to 0° before dragging!';
+        trayHelperText.textContent = 'Tap a part or ↻ to rotate to 0° before placing!';
       } else if (rules.hintMode === 'next') {
         silhouetteEl.classList.remove('silhouette-visible');
         silhouetteEl.classList.add('silhouette-hidden');
@@ -2339,7 +2610,7 @@
       renderTray(rules);
 
       const spotText = targetPiece.spotClue ? ` (${targetPiece.spotClue})` : '';
-      showFact(`🎯 Hint (5 tries): "${targetPiece.name}" highlighted${spotText} — drop on gold target!`, 'super-hint');
+      showFact(`🎯 Hint (5 tries): "${targetPiece.name}" highlighted${spotText} — drop or tap on gold target!`, 'super-hint');
     }
 
     function updateProgress() {
@@ -2347,12 +2618,18 @@
       const total = partsState.length;
       progressText.textContent = `${placedCount} / ${total} Assembled`;
       progressFill.style.width = `${(placedCount / total) * 100}%`;
+      if (trayCountBadge) {
+        trayCountBadge.textContent = `${placedCount} / ${total}`;
+      }
 
       if (placedCount === total) {
         beaconLayer.innerHTML = '';
         playSound('win');
         const level = LEVELS[currentLevelIndex];
         const rules = getLevelRules(level.levelNumber);
+
+        saveCompletedLevel(level.levelNumber);
+        refreshLevelDropdown();
 
         if (rules.mysteryObject) {
           const titleEl = document.getElementById('object-title');
@@ -2390,32 +2667,60 @@
         g.dataset.id = part.id;
 
         g.innerHTML = `
-          <g transform="translate(${part.roomX}, ${part.roomY}) scale(0.76) translate(${-part.targetX}, ${-part.targetY})">
+          <g transform="translate(${part.roomX || 400}, ${part.roomY || 200}) scale(0.76) translate(${-part.targetX}, ${-part.targetY})">
             ${part.boardSvg}
           </g>
         `;
-        g.addEventListener('pointerdown', (e) => startDrag(e, part));
+        // Room parts start drag directly on interaction
+        g.addEventListener('pointerdown', (e) => {
+          if (e.pointerType === 'mouse' && e.button !== 0) return;
+          e.preventDefault();
+          e.stopPropagation();
+          draggingPart = part;
+          selectedPartId = part.id;
+          createGhostSvg(part);
+          ghostEl.style.display = 'block';
+          playSound('pickup');
+          updateGhostPosition(e.clientX, e.clientY);
+        });
         roomScatterLayer.appendChild(g);
       });
     }
 
     function renderTray(rules = getLevelRules(LEVELS[currentLevelIndex].levelNumber)) {
       trayEl.innerHTML = '';
+      const placedCount = partsState.filter(p => p.placed).length;
+      const totalCount = partsState.length;
+      if (trayCountBadge) {
+        trayCountBadge.textContent = `${placedCount} / ${totalCount}`;
+      }
+
       partsState.forEach(part => {
         const slot = document.createElement('div');
+        const isSelected = selectedPartId === part.id;
 
         if (rules.roomScavenger) {
-          slot.className = 'part-slot room-checklist-slot' + (part.placed ? ' placed' : '') + (part.highlightHint ? ' hint-highlight' : '');
+          slot.className = 'part-slot room-checklist-slot' + (part.placed ? ' placed' : '') + (part.highlightHint ? ' hint-highlight' : '') + (isSelected ? ' selected' : '');
           const label = document.createElement('div');
           label.className = 'part-label';
           label.textContent = part.placed ? `✓ ${part.name}` : `🔍 ${part.name}`;
           slot.appendChild(label);
+          slot.dataset.id = part.id;
+          slot.tabIndex = part.placed ? -1 : 0;
+          slot.setAttribute('role', 'button');
+          slot.setAttribute('aria-label', `${part.name}${part.placed ? ' (placed)' : ''}`);
+          if (!part.placed) {
+            slot.addEventListener('click', () => toggleSelectPart(part.id));
+          }
           trayEl.appendChild(slot);
           return;
         }
 
-        slot.className = 'part-slot' + (part.placed ? ' placed' : '') + (part.highlightHint ? ' hint-highlight' : '');
+        slot.className = 'part-slot' + (part.placed ? ' placed' : '') + (part.highlightHint ? ' hint-highlight' : '') + (isSelected ? ' selected' : '');
         slot.dataset.id = part.id;
+        slot.tabIndex = part.placed ? -1 : 0;
+        slot.setAttribute('role', 'button');
+        slot.setAttribute('aria-label', `${part.name}${part.placed ? ' (placed)' : ''}`);
 
         if (!part.placed && part.showAngleHint) {
           const turnsNeeded = ((360 - part.rotation) % 360) / 90;
@@ -2443,45 +2748,6 @@
         preview.style.transform = `rotate(${part.rotation}deg)`;
         preview.innerHTML = `
           <svg viewBox="${part.previewBox}" width="80" height="46" style="overflow:visible;">
-            <defs>
-              <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.72" />
-                <stop offset="100%" stop-color="#7dd3fc" stop-opacity="0.78" />
-              </linearGradient>
-              <linearGradient id="steelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#e2e8f0" />
-                <stop offset="50%" stop-color="#94a3b8" />
-                <stop offset="100%" stop-color="#475569" />
-              </linearGradient>
-              <linearGradient id="woodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#d97706" />
-                <stop offset="100%" stop-color="#78350f" />
-              </linearGradient>
-              <linearGradient id="yellowBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#fde047" />
-                <stop offset="100%" stop-color="#ca8a04" />
-              </linearGradient>
-              <linearGradient id="flashlightBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#3b82f6" />
-                <stop offset="100%" stop-color="#1e3a8a" />
-              </linearGradient>
-              <linearGradient id="beamBulbGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#fef08a" />
-                <stop offset="100%" stop-color="#f59e0b" />
-              </linearGradient>
-              <linearGradient id="guitarBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ea580c" />
-                <stop offset="100%" stop-color="#7c2d12" />
-              </linearGradient>
-              <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#fde68a" />
-                <stop offset="100%" stop-color="#a16207" />
-              </linearGradient>
-              <linearGradient id="redPaintGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#f87171" />
-                <stop offset="100%" stop-color="#991b1b" />
-              </linearGradient>
-            </defs>
             ${part.previewSvg}
           </svg>
         `;
@@ -2493,11 +2759,22 @@
         slot.appendChild(label);
 
         if (!part.placed) {
-          slot.addEventListener('pointerdown', (e) => startDrag(e, part));
+          slot.addEventListener('pointerdown', (e) => handleSlotPointerDown(e, part));
+          slot.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggleSelectPart(part.id);
+            } else if ((e.key === 'r' || e.key === 'R') && rules.randomRotation) {
+              e.preventDefault();
+              rotatePart(part.id);
+            }
+          });
         }
 
         trayEl.appendChild(slot);
       });
+
+      updateTrayScrollIndicators();
     }
 
     function rotatePart(partId) {
@@ -2506,20 +2783,56 @@
       part.rotation = (part.rotation + 90) % 360;
       playSound('rotate');
       renderTray();
+      updateTrayScrollIndicators();
     }
 
-    let pointerDownPos = { x: 0, y: 0 };
-    let hasMoved = false;
+    function toggleSelectPart(partId) {
+      const part = partsState.find(p => p.id === partId);
+      if (!part || part.placed) return;
+      const rules = getLevelRules(LEVELS[currentLevelIndex].levelNumber);
 
-    function startDrag(e, part) {
-      if (part.placed) return;
-      if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
-      e.preventDefault();
-      e.stopPropagation();
-      draggingPart = part;
-      pointerDownPos = { x: e.clientX, y: e.clientY };
-      hasMoved = false;
+      if (selectedPartId === partId) {
+        if (rules.randomRotation) {
+          rotatePart(partId);
+          return;
+        }
+        selectedPartId = null;
+        showFact(`🔧 Drag or tap any component to start building!`);
+      } else {
+        selectedPartId = partId;
+        playSound('pickup');
+        const spotText = part.spotClue ? ` (${part.spotClue})` : '';
+        showFact(`👉 ${part.name} selected! Tap its spot on the workbench or drag into place.${spotText}`);
+      }
+      renderTray(rules);
+    }
 
+    // Tap-to-Place on Workbench SVG
+    svgEl.addEventListener('click', (e) => {
+      if (!selectedPartId || draggingPart) return;
+      const part = partsState.find(p => p.id === selectedPartId);
+      if (!part || part.placed) return;
+
+      const ctm = svgEl.getScreenCTM();
+      if (!ctm) return;
+      const pt = svgEl.createSVGPoint();
+      pt.x = e.clientX;
+      pt.y = e.clientY;
+      const svgCoords = pt.matrixTransform(ctm.inverse());
+
+      const dist = Math.hypot(svgCoords.x - part.targetX, svgCoords.y - part.targetY);
+      const rules = getLevelRules(LEVELS[currentLevelIndex].levelNumber);
+      const allowedTapRadius = Math.max(120, part.snapRadius * 1.5);
+
+      if (dist <= allowedTapRadius) {
+        attemptSnap(part, rules);
+        selectedPartId = null;
+      } else {
+        showFact(`Target is closer to the ${part.spotClue || 'blueprint outline'}. Tap closer or drag into place!`, 'warning');
+      }
+    });
+
+    function createGhostSvg(part) {
       const boardRect = svgEl.getBoundingClientRect();
       ghostEl.innerHTML = `
         <svg viewBox="0 0 800 380" width="${boardRect.width}" height="${boardRect.height}" style="overflow:visible;">
@@ -2528,45 +2841,143 @@
           </g>
         </svg>
       `;
-      updateGhostPosition(e.clientX, e.clientY);
     }
 
     function updateGhostPosition(clientX, clientY) {
       if (!draggingPart) return;
-      const moveThreshold = isTouchDevice() ? 5 : 6;
-      const dist = Math.hypot(clientX - pointerDownPos.x, clientY - pointerDownPos.y);
-      if (dist > moveThreshold && !hasMoved) {
-        hasMoved = true;
-        ghostEl.style.display = 'block';
-        playSound('pickup');
-      }
-      if (hasMoved) {
-        const offsetY = getTouchOffsetY();
-        ghostEl.style.left = `${clientX}px`;
-        ghostEl.style.top = `${clientY + offsetY}px`;
+      const offsetY = getTouchOffsetY();
+      ghostEl.style.left = `${clientX}px`;
+      ghostEl.style.top = `${clientY + offsetY}px`;
+    }
+
+    function handleSlotPointerDown(e, part) {
+      if (part.placed) return;
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+      if (e.pointerType === 'touch') {
+        // DO NOT preventDefault on touch start — allows hardware momentum scroll
+        touchState = {
+          part,
+          startX: e.clientX,
+          startY: e.clientY,
+          isDragging: false,
+          isScrolling: false
+        };
+      } else {
+        // Mouse start
+        mouseDragState = {
+          part,
+          startX: e.clientX,
+          startY: e.clientY,
+          isDragging: false
+        };
       }
     }
 
     window.addEventListener('pointermove', (e) => {
-      if (!draggingPart) return;
-      if (e.pointerType === 'touch') e.preventDefault();
-      updateGhostPosition(e.clientX, e.clientY);
-    }, { passive: false });
+      // Touch handling: disambiguate horizontal swipe (scroll) vs upward drag
+      if (touchState) {
+        if (touchState.isScrolling) return;
 
-    window.addEventListener('pointerup', (e) => {
-      if (!draggingPart) return;
-      const part = draggingPart;
-      draggingPart = null;
-      ghostEl.style.display = 'none';
+        if (touchState.isDragging) {
+          if (e.cancelable) e.preventDefault();
+          updateGhostPosition(e.clientX, e.clientY);
+          return;
+        }
 
-      const rules = getLevelRules(LEVELS[currentLevelIndex].levelNumber);
+        const dx = e.clientX - touchState.startX;
+        const dy = e.clientY - touchState.startY;
 
-      if (!hasMoved) {
-        if (rules.randomRotation) {
-          rotatePart(part.id);
+        // User is scrolling horizontally across the subparts tray
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6) {
+          touchState.isScrolling = true;
+          return;
+        }
+
+        // User is lifting the part upward towards the workbench
+        if (dy < -10 || (Math.abs(dy) > Math.abs(dx) + 4 && Math.abs(dy) > 10)) {
+          touchState.isDragging = true;
+          draggingPart = touchState.part;
+          createGhostSvg(draggingPart);
+          ghostEl.style.display = 'block';
+          playSound('pickup');
+          if (e.cancelable) e.preventDefault();
+          updateGhostPosition(e.clientX, e.clientY);
         }
         return;
       }
+
+      // Mouse drag handling
+      if (mouseDragState) {
+        if (mouseDragState.isDragging) {
+          updateGhostPosition(e.clientX, e.clientY);
+          return;
+        }
+        const dist = Math.hypot(e.clientX - mouseDragState.startX, e.clientY - mouseDragState.startY);
+        if (dist > 5) {
+          mouseDragState.isDragging = true;
+          draggingPart = mouseDragState.part;
+          createGhostSvg(draggingPart);
+          ghostEl.style.display = 'block';
+          playSound('pickup');
+          updateGhostPosition(e.clientX, e.clientY);
+        }
+        return;
+      }
+
+      // Direct dragging (e.g. room mode)
+      if (draggingPart && !touchState && !mouseDragState) {
+        if (e.pointerType === 'touch' && e.cancelable) e.preventDefault();
+        updateGhostPosition(e.clientX, e.clientY);
+      }
+    }, { passive: false });
+
+    window.addEventListener('pointerup', (e) => {
+      if (touchState) {
+        const state = touchState;
+        touchState = null;
+
+        if (state.isDragging) {
+          handleDrop(e, state.part);
+        } else if (!state.isScrolling) {
+          // Clean tap on part
+          toggleSelectPart(state.part.id);
+        }
+        return;
+      }
+
+      if (mouseDragState) {
+        const state = mouseDragState;
+        mouseDragState = null;
+
+        if (state.isDragging) {
+          handleDrop(e, state.part);
+        } else {
+          // Clean click on part
+          toggleSelectPart(state.part.id);
+        }
+        return;
+      }
+
+      if (draggingPart) {
+        const part = draggingPart;
+        draggingPart = null;
+        ghostEl.style.display = 'none';
+        handleDrop(e, part);
+      }
+    });
+
+    window.addEventListener('pointercancel', () => {
+      touchState = null;
+      mouseDragState = null;
+      draggingPart = null;
+      ghostEl.style.display = 'none';
+    });
+
+    function handleDrop(e, part) {
+      ghostEl.style.display = 'none';
+      draggingPart = null;
+      const rules = getLevelRules(LEVELS[currentLevelIndex].levelNumber);
 
       const ctm = svgEl.getScreenCTM();
       if (!ctm) return;
@@ -2585,7 +2996,7 @@
       } else {
         registerFailedAttempt(rules, `Not quite! Try positioning the ${part.name} closer to where it connects.`);
       }
-    });
+    }
 
     function registerFailedAttempt(rules, defaultMessage) {
       failedAttempts++;
@@ -2621,6 +3032,10 @@
       part.highlightHint = false;
       part.showAngleHint = false;
 
+      if (selectedPartId === part.id) {
+        selectedPartId = null;
+      }
+
       if (activeHintPartId === part.id) {
         riddleHintStage = 0;
         activeHintPartId = null;
@@ -2641,6 +3056,18 @@
       if (rules.roomScavenger) renderRoomScatter();
       renderTray(rules);
       updateProgress();
+      updateTrayScrollIndicators();
+
+      // Smoothly bring the next unplaced part into view in the tray
+      const nextUnplaced = partsState.find(p => !p.placed);
+      if (nextUnplaced && trayEl) {
+        const nextSlot = trayEl.querySelector(`[data-id="${nextUnplaced.id}"]`);
+        if (nextSlot) {
+          setTimeout(() => {
+            nextSlot.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }, 100);
+        }
+      }
     }
 
     hintBtn.addEventListener('click', () => {
@@ -2706,7 +3133,7 @@
       loadLevel(nextIdx);
     });
 
-    loadLevel(0);
+    loadLevel(getSavedCurrentLevelIndex());
   </script>
 </body>
 </html>
