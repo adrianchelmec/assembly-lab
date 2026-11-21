@@ -1,0 +1,2406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assembly Lab — Junior Engineering Puzzle Game</title>
+  <style>
+    :root {
+      --bg-color: #f0f4f8;
+      --grid-color: #dbe4ee;
+      --panel-bg: #ffffff;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --danger: #ef4444;
+      --purple: #7c3aed;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    header {
+      background: var(--panel-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      z-index: 20;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-main);
+    }
+
+    .brand span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .level-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8fafc;
+      padding: 6px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .nav-arrow {
+      border: 1px solid var(--border);
+      background: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      font-weight: 800;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .nav-arrow:hover:not(:disabled) {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .nav-arrow:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .level-select {
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      padding: 4px 8px;
+      cursor: pointer;
+      outline: none;
+      max-width: 310px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-hint {
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fcd34d;
+    }
+
+    .btn-hint:hover:not(:disabled) {
+      background: #fde68a;
+      transform: translateY(-1px);
+    }
+
+    .btn-hint:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-reset {
+      background: #f1f5f9;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    }
+
+    .btn-reset:hover {
+      background: #e2e8f0;
+    }
+
+    .info-strip {
+      background: #eff6ff;
+      border-bottom: 1px solid #bfdbfe;
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13.5px;
+      z-index: 15;
+    }
+
+    .rule-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: #1e40af;
+      flex-shrink: 0;
+    }
+
+    .rule-pill {
+      background: #dbeafe;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .rule-pill.mystery {
+      background: #ede9fe;
+      color: #5b21b6;
+    }
+
+    .rule-pill.room {
+      background: #ffedd5;
+      color: #9a3412;
+    }
+
+    .fact-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #065f46;
+      background: #d1fae5;
+      border: 1px solid #6ee7b7;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 13px;
+      animation: popIn 0.25s ease-out;
+    }
+
+    .fact-banner.warning {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+
+    .fact-banner.riddle {
+      background: #f3e8ff;
+      border-color: #c084fc;
+      color: #581c87;
+    }
+
+    .fact-banner.super-hint {
+      background: #fef3c7;
+      border-color: #f59e0b;
+      color: #92400e;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.92); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-image:
+        linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+      background-size: 32px 32px;
+      overflow: hidden;
+    }
+
+    main.room-mode {
+      background-image: none;
+      transition: background-color 0.35s ease;
+    }
+
+    .workbench-header {
+      position: absolute;
+      top: 14px;
+      left: 24px;
+      right: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .target-card {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .target-card .label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .target-card .title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-top: 2px;
+    }
+
+    .target-card .title.mystery-title {
+      color: var(--purple);
+      letter-spacing: 0.5px;
+    }
+
+    .progress-card {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 16px;
+      text-align: right;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .progress-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-bg {
+      width: 140px;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--success);
+      width: 0%;
+      transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .board-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 12px;
+    }
+
+    svg#assembly-svg {
+      width: 100%;
+      height: 100%;
+      max-width: 980px;
+      max-height: 460px;
+      overflow: visible;
+      touch-action: none;
+    }
+
+    .silhouette-group {
+      transition: opacity 0.35s ease;
+    }
+
+    .silhouette-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .silhouette-visible {
+      opacity: 1;
+    }
+
+    .anchor-crosshair {
+      opacity: 0.45;
+      transition: opacity 0.3s ease;
+    }
+
+    .snapped-part {
+      filter: drop-shadow(0 4px 6px rgba(15, 23, 42, 0.14));
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .snap-pulse {
+      animation: snapBounce 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes snapBounce {
+      0% { transform: scale(1.12); }
+      60% { transform: scale(0.96); }
+      100% { transform: scale(1); }
+    }
+
+    .target-beacon {
+      pointer-events: none;
+      animation: beaconPulse 1.1s infinite ease-in-out;
+    }
+
+    @keyframes beaconPulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.18); opacity: 0.45; }
+    }
+
+    .room-hidden-part {
+      cursor: grab;
+      transition: filter 0.2s ease, transform 0.2s ease;
+    }
+
+    .room-hidden-part:hover {
+      filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.75));
+    }
+
+    .room-hidden-part.hint-pulse {
+      filter: drop-shadow(0 0 14px rgba(245, 158, 11, 0.95));
+      animation: roomPulse 1s infinite alternate;
+    }
+
+    @keyframes roomPulse {
+      from { opacity: 0.75; }
+      to { opacity: 1; }
+    }
+
+    .tray-wrapper {
+      background: var(--panel-bg);
+      border-top: 2px solid var(--border);
+      padding: 10px 20px 14px;
+      z-index: 20;
+      box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.06);
+    }
+
+    .tray-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .tray-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .tray-helper {
+      font-size: 12.5px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .parts-tray {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    .part-slot {
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 8px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      width: 122px;
+      height: 102px;
+      position: relative;
+      cursor: grab;
+      transition: all 0.18s ease;
+      touch-action: none;
+    }
+
+    .part-slot:hover:not(.placed):not(.room-checklist-slot) {
+      border-color: var(--primary);
+      background: #eff6ff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
+    }
+
+    .part-slot.room-checklist-slot {
+      cursor: default;
+      background: #fffbeb;
+      border-color: #fde68a;
+      height: 56px;
+      width: 150px;
+      justify-content: center;
+    }
+
+    .part-slot.placed {
+      background: #f1f5f9;
+      border-style: dashed;
+      border-color: #cbd5e1;
+      cursor: default;
+      opacity: 0.6;
+    }
+
+    .part-slot.hint-highlight {
+      border-color: var(--accent);
+      background: #fffbeb;
+      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.28);
+      animation: pulseGlow 1.2s infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    .part-preview {
+      width: 84px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .part-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      text-align: center;
+      line-height: 1.15;
+    }
+
+    .part-slot.placed .part-label {
+      color: var(--success);
+    }
+
+    .rotate-badge {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+      z-index: 3;
+    }
+
+    .rotate-badge:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .angle-hint-tag {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #b45309;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 5px;
+      border-radius: 6px;
+      z-index: 3;
+    }
+
+    #drag-ghost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      display: none;
+      filter: drop-shadow(0 14px 20px rgba(15, 23, 42, 0.28));
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .blueprint-modal {
+      background: white;
+      border-radius: 20px;
+      max-width: 560px;
+      width: 100%;
+      padding: 28px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      border: 2px solid #bfdbfe;
+      text-align: center;
+      animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-badge {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .blueprint-modal h2 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .blueprint-modal p {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.55;
+      margin: 0 0 20px;
+    }
+
+    .blueprint-summary-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px 18px;
+      text-align: left;
+      margin-bottom: 22px;
+    }
+
+    .blueprint-summary-box h4 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      text-transform: uppercase;
+      color: var(--primary);
+      letter-spacing: 0.5px;
+    }
+
+    .blueprint-summary-box ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13.5px;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      padding: 11px 22px;
+      font-size: 15px;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-icon">⚙</div>
+      <div>
+        <h1>Assembly Lab</h1>
+        <span>Junior Engineering Workshop • Ages 10–14</span>
+      </div>
+    </div>
+
+    <div class="level-nav">
+      <button class="nav-arrow" id="prev-level-btn" title="Previous Level">◀</button>
+      <select class="level-select" id="level-select" aria-label="Select Level"></select>
+      <button class="nav-arrow" id="next-level-btn" title="Next Level">▶</button>
+    </div>
+
+    <div class="header-actions">
+      <button id="hint-btn" class="btn btn-hint" disabled>💡 Hint</button>
+      <button id="reset-btn" class="btn btn-reset">↺ Reset</button>
+    </div>
+  </header>
+
+  <div class="info-strip">
+    <div class="rule-badge" id="rule-summary"></div>
+    <div id="fact-display" class="fact-banner">
+      <span>🔧 Drag any part from the tray onto the workbench to start building!</span>
+    </div>
+  </div>
+
+  <main id="main-workspace">
+    <div class="workbench-header">
+      <div class="target-card">
+        <div class="label" id="category-label">Level 1 • Category 1</div>
+        <div class="title" id="object-title">Wooden Pencil</div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-text" id="progress-text">0 / 3 Parts Assembled</div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="board-container">
+      <svg id="assembly-svg" viewBox="0 0 800 380">
+        <defs>
+          <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.72" />
+            <stop offset="50%" stop-color="#e0f2fe" stop-opacity="0.48" />
+            <stop offset="100%" stop-color="#7dd3fc" stop-opacity="0.78" />
+          </linearGradient>
+          <linearGradient id="frameGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#334155" />
+            <stop offset="100%" stop-color="#0f172a" />
+          </linearGradient>
+          <linearGradient id="templeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1e293b" />
+            <stop offset="85%" stop-color="#334155" />
+            <stop offset="100%" stop-color="#2563eb" />
+          </linearGradient>
+          <linearGradient id="steelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#e2e8f0" />
+            <stop offset="50%" stop-color="#94a3b8" />
+            <stop offset="100%" stop-color="#475569" />
+          </linearGradient>
+          <linearGradient id="woodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#d97706" />
+            <stop offset="50%" stop-color="#b45309" />
+            <stop offset="100%" stop-color="#78350f" />
+          </linearGradient>
+          <linearGradient id="yellowBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#fde047" />
+            <stop offset="50%" stop-color="#eab308" />
+            <stop offset="100%" stop-color="#ca8a04" />
+          </linearGradient>
+          <linearGradient id="flashlightBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#3b82f6" />
+            <stop offset="50%" stop-color="#1d4ed8" />
+            <stop offset="100%" stop-color="#1e3a8a" />
+          </linearGradient>
+          <linearGradient id="beamBulbGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#fef08a" />
+            <stop offset="100%" stop-color="#f59e0b" />
+          </linearGradient>
+          <linearGradient id="guitarBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ea580c" />
+            <stop offset="55%" stop-color="#c2410c" />
+            <stop offset="100%" stop-color="#7c2d12" />
+          </linearGradient>
+          <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fde68a" />
+            <stop offset="50%" stop-color="#eab308" />
+            <stop offset="100%" stop-color="#a16207" />
+          </linearGradient>
+          <linearGradient id="redPaintGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#f87171" />
+            <stop offset="50%" stop-color="#dc2626" />
+            <stop offset="100%" stop-color="#991b1b" />
+          </linearGradient>
+        </defs>
+
+        <g id="room-bg-layer" style="display:none;"></g>
+
+        <g class="anchor-crosshair" transform="translate(400, 195)">
+          <line x1="-24" y1="0" x2="24" y2="0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3" />
+          <line x1="0" y1="-24" x2="0" y2="24" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3" />
+          <circle cx="0" cy="0" r="4" fill="#94a3b8" />
+        </g>
+
+        <g id="silhouette-layer" class="silhouette-group silhouette-visible"></g>
+
+        <g id="layer-z1"></g>
+        <g id="layer-z2"></g>
+        <g id="layer-z3"></g>
+        <g id="layer-z4"></g>
+
+        <g id="beacon-layer"></g>
+        <g id="room-scatter-layer"></g>
+      </svg>
+    </div>
+  </main>
+
+  <section class="tray-wrapper">
+    <div class="tray-header">
+      <span class="tray-title" id="tray-title-text">Component Tray</span>
+      <span class="tray-helper" id="tray-helper-text">Drag each component to its matching position on the blueprint.</span>
+    </div>
+    <div class="parts-tray" id="parts-tray"></div>
+  </section>
+
+  <div id="drag-ghost"></div>
+
+  <div class="modal-backdrop" id="complete-modal">
+    <div class="blueprint-modal">
+      <div class="modal-badge" id="modal-badge">Blueprint Unlocked!</div>
+      <h2 id="modal-title">Object Assembled</h2>
+      <p id="modal-intro">Great job, Junior Engineer!</p>
+      <div class="blueprint-summary-box">
+        <h4>How This System Works Together</h4>
+        <ul id="modal-bullets"></ul>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-reset" id="modal-replay-btn">↺ Replay Level</button>
+        <button class="btn btn-primary" id="modal-next-level-btn">Next Level →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      const now = audioCtx.currentTime;
+
+      if (type === 'pickup') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.exponentialRampToValueAtTime(520, now + 0.08);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      } else if (type === 'rotate') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(600, now + 0.07);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+        osc.start(now);
+        osc.stop(now + 0.07);
+      } else if (type === 'snap') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.06);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.start(now);
+        osc.stop(now + 0.22);
+      } else if (type === 'error') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.linearRampToValueAtTime(130, now + 0.18);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        osc.start(now);
+        osc.stop(now + 0.18);
+      } else if (type === 'win') {
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, i) => {
+          const o = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          o.type = 'triangle';
+          o.connect(g);
+          g.connect(audioCtx.destination);
+          o.frequency.setValueAtTime(freq, now + i * 0.09);
+          g.gain.setValueAtTime(0.15, now + i * 0.09);
+          g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.09 + 0.35);
+          o.start(now + i * 0.09);
+          o.stop(now + i * 0.09 + 0.35);
+        });
+      }
+    }
+
+    const LEVELS = [
+      {
+        levelNumber: 1,
+        category: 'Category 1 • 3 Subparts',
+        name: 'Wooden Pencil',
+        intro: 'You assembled a classic writing tool! Even a simple pencil relies on three specialized materials working together.',
+        summaryBullets: [
+          '<strong>Graphite Core & Cone:</strong> Leaves microscopic layers of carbon on paper as you write.',
+          '<strong>Cedar Wood Barrel:</strong> Protects the brittle graphite core from snapping and provides a hexagonal grip.',
+          '<strong>Ferrule & Eraser:</strong> A crimped metal band locks the rubber eraser onto the barrel to lift graphite marks.'
+        ],
+        silhouetteSvg: `
+          <polygon points="150,195 215,173 215,217" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/>
+          <rect x="215" y="173" width="350" height="44" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/>
+          <rect x="565" y="173" width="85" height="44" rx="8" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/>
+        `,
+        parts: [
+          {
+            id: 'pencil_barrel', name: 'Hexagonal Barrel', zLayer: 'layer-z2', targetX: 390, targetY: 195, snapRadius: 80, orderRank: 1, dependencies: [],
+            dependencyMsg: 'Start with the main Hexagonal Barrel!',
+            spotClue: 'Center of the workbench (horizontal shaft)',
+            fact: 'Most pencils have 6 sides (hexagonal) so they don’t roll off slanted school desks!',
+            previewBox: '0 0 160 44',
+            previewSvg: `<rect x="8" y="8" width="144" height="28" fill="url(#yellowBodyGrad)" stroke="#a16207" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(390, 195)"><rect x="-175" y="-22" width="350" height="44" fill="url(#yellowBodyGrad)" stroke="#a16207" stroke-width="2"/><line x1="-175" y1="-8" x2="175" y2="-8" stroke="#fef08a" stroke-width="2" opacity="0.7"/><line x1="-175" y1="8" x2="175" y2="8" stroke="#a16207" stroke-width="2" opacity="0.5"/></g>`
+          },
+          {
+            id: 'pencil_tip', name: 'Graphite Tip', zLayer: 'layer-z3', targetX: 182, targetY: 195, snapRadius: 70, orderRank: 2, dependencies: ['pencil_barrel'],
+            dependencyMsg: 'Place the Hexagonal Barrel first before attaching the Graphite Tip!',
+            spotClue: 'Left end of the wooden barrel',
+            fact: 'Pencil "lead" isn’t actually lead—it’s a safe, non-toxic mix of graphite and clay.',
+            previewBox: '0 0 90 54',
+            previewSvg: `<polygon points="10,27 78,6 78,48" fill="#fde68a" stroke="#b45309" stroke-width="2"/><polygon points="10,27 32,20 32,34" fill="#1e293b"/>`,
+            boardSvg: `<g transform="translate(182, 195)"><polygon points="-32,0 33,-22 33,22" fill="#fde68a" stroke="#b45309" stroke-width="2"/><polygon points="-32,0 -10,-7 -10,7" fill="#1e293b"/></g>`
+          },
+          {
+            id: 'pencil_eraser', name: 'Ferrule & Eraser', zLayer: 'layer-z3', targetX: 608, targetY: 195, snapRadius: 70, orderRank: 2, dependencies: ['pencil_barrel'],
+            dependencyMsg: 'Place the Hexagonal Barrel first before attaching the Ferrule & Eraser!',
+            spotClue: 'Right end of the wooden barrel',
+            fact: 'The metal ring holding the eraser is called a "ferrule"—it is crimped tightly without glue.',
+            previewBox: '0 0 100 54',
+            previewSvg: `<rect x="40" y="7" width="48" height="40" rx="10" fill="#f472b6" stroke="#db2777" stroke-width="2"/><rect x="10" y="6" width="36" height="42" fill="url(#steelGrad)" stroke="#475569" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(608, 195)"><rect x="-12" y="-21" width="54" height="42" rx="10" fill="#f472b6" stroke="#db2777" stroke-width="2"/><rect x="-43" y="-22" width="38" height="44" fill="url(#steelGrad)" stroke="#475569" stroke-width="2"/><line x1="-32" y1="-22" x2="-32" y2="22" stroke="#334155" stroke-width="2"/><line x1="-16" y1="-22" x2="-16" y2="22" stroke="#334155" stroke-width="2"/></g>`
+          }
+        ]
+      },
+      {
+        levelNumber: 2,
+        category: 'Category 1 • 3 Subparts',
+        name: 'Magnifying Glass',
+        intro: 'You built a hand lens! By curving clear glass outward on both sides, a magnifying glass bends light to make tiny details appear larger.',
+        summaryBullets: [
+          '<strong>Biconvex Lens:</strong> Curves outward like a lentil bean to bend parallel light rays toward a focal point.',
+          '<strong>Bezel Rim:</strong> Protects the fragile glass edge from chipping and keeps the lens aligned.',
+          '<strong>Ergonomic Handle:</strong> Lets you hold the lens steady at the exact focal distance above an object.'
+        ],
+        silhouetteSvg: `<circle cx="315" cy="195" r="88" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/><rect x="403" y="180" width="185" height="30" rx="14" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/>`,
+        parts: [
+          {
+            id: 'mag_rim', name: 'Bezel Rim', zLayer: 'layer-z3', targetX: 315, targetY: 195, snapRadius: 75, orderRank: 1, dependencies: [],
+            dependencyMsg: 'Start with the circular Bezel Rim!',
+            spotClue: 'Circular outline on the left-center of the board',
+            fact: 'The metal bezel rim protects the thin edges of the glass lens from cracking if dropped.',
+            previewBox: '0 0 80 80', previewSvg: `<circle cx="40" cy="40" r="30" fill="none" stroke="#475569" stroke-width="7"/>`,
+            boardSvg: `<g transform="translate(315, 195)"><circle cx="0" cy="0" r="84" fill="none" stroke="url(#steelGrad)" stroke-width="14"/><circle cx="0" cy="0" r="91" fill="none" stroke="#334155" stroke-width="2"/></g>`
+          },
+          {
+            id: 'mag_lens', name: 'Convex Lens', zLayer: 'layer-z2', targetX: 315, targetY: 195, snapRadius: 75, orderRank: 2, dependencies: ['mag_rim'],
+            dependencyMsg: 'Place the Bezel Rim first so the Convex Lens has a frame!',
+            spotClue: 'Inside the circular Bezel Rim',
+            fact: 'A convex lens is thicker in the middle than at the edges, bending light rays inward to magnify objects.',
+            previewBox: '0 0 80 80', previewSvg: `<circle cx="40" cy="40" r="28" fill="url(#lensGrad)" stroke="#38bdf8" stroke-width="2"/><path d="M 25 26 Q 38 18 52 26" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"/>`,
+            boardSvg: `<g transform="translate(315, 195)"><circle cx="0" cy="0" r="78" fill="url(#lensGrad)"/><path d="M -42 -36 Q 0 -64 42 -36" fill="none" stroke="white" stroke-width="5" stroke-linecap="round" opacity="0.75"/></g>`
+          },
+          {
+            id: 'mag_handle', name: 'Grip Handle', zLayer: 'layer-z2', targetX: 495, targetY: 195, snapRadius: 75, orderRank: 2, dependencies: ['mag_rim'],
+            dependencyMsg: 'Place the Bezel Rim first before attaching the Grip Handle!',
+            spotClue: 'Right side of the circular Bezel Rim',
+            fact: 'Holding the handle keeps your fingers off the glass so skin oils don’t smudge the optics.',
+            previewBox: '0 0 140 44', previewSvg: `<rect x="6" y="13" width="24" height="18" fill="#94a3b8"/><rect x="28" y="8" width="104" height="28" rx="13" fill="#78350f" stroke="#451a03" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(495, 195)"><rect x="-92" y="-10" width="26" height="20" fill="url(#steelGrad)" stroke="#334155" stroke-width="1.5"/><rect x="-68" y="-16" width="160" height="32" rx="15" fill="url(#woodGrad)" stroke="#451a03" stroke-width="2"/></g>`
+          }
+        ]
+      },
+      {
+        levelNumber: 3,
+        category: 'Category 1 • 3 Subparts',
+        name: 'Claw Hammer',
+        intro: 'You assembled a classic lever and impact tool! A claw hammer combines heavy momentum with a curved pry bar.',
+        summaryBullets: [
+          '<strong>Steel Hammerhead:</strong> Concentrates force onto a small striking face to drive nails into wood.',
+          '<strong>V-Shaped Claw:</strong> Acts as a first-class lever to grip nail heads and pull them out effortlessly.',
+          '<strong>Shock-Absorbing Handle:</strong> Fiberglass or hickory wood absorbs vibrations so your hand doesn’t sting.'
+        ],
+        silhouetteSvg: `<rect x="380" y="110" width="40" height="225" rx="12" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/><path d="M 315 112 L 435 112 L 435 148 L 315 148 Z" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/><path d="M 435 112 Q 490 112 515 152 L 485 160 Q 468 140 435 144 Z" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/>`,
+        parts: [
+          {
+            id: 'hammer_handle', name: 'Ergonomic Handle', zLayer: 'layer-z2', targetX: 400, targetY: 222, snapRadius: 80, orderRank: 1, dependencies: [],
+            dependencyMsg: 'Start with the Ergonomic Handle!',
+            spotClue: 'Vertical shaft in the center of the board',
+            fact: 'A longer handle increases swing speed, giving the hammerhead more kinetic energy on impact.',
+            previewBox: '0 0 44 130', previewSvg: `<rect x="12" y="6" width="20" height="118" rx="8" fill="url(#woodGrad)" stroke="#451a03" stroke-width="2"/><rect x="10" y="68" width="24" height="54" rx="8" fill="#1e293b"/>`,
+            boardSvg: `<g transform="translate(400, 222)"><rect x="-18" y="-112" width="36" height="224" rx="10" fill="url(#woodGrad)" stroke="#451a03" stroke-width="2"/><rect x="-21" y="10" width="42" height="102" rx="12" fill="#1e293b"/></g>`
+          },
+          {
+            id: 'hammer_head', name: 'Striking Head', zLayer: 'layer-z3', targetX: 375, targetY: 130, snapRadius: 70, orderRank: 2, dependencies: ['hammer_handle'],
+            dependencyMsg: 'Place the Handle first before mounting the Striking Head!',
+            spotClue: 'Top-left of the vertical handle',
+            fact: 'Hammerheads are made of forged high-carbon steel so they won’t dent when hitting hardened nails.',
+            previewBox: '0 0 110 50', previewSvg: `<rect x="24" y="10" width="76" height="30" rx="4" fill="url(#steelGrad)" stroke="#334155" stroke-width="2"/><rect x="8" y="6" width="18" height="38" rx="3" fill="#64748b" stroke="#334155" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(375, 130)"><rect x="-38" y="-18" width="98" height="36" rx="4" fill="url(#steelGrad)" stroke="#334155" stroke-width="2"/><rect x="-60" y="-22" width="24" height="44" rx="4" fill="#64748b" stroke="#334155" stroke-width="2"/></g>`
+          },
+          {
+            id: 'hammer_claw', name: 'Curved Claw', zLayer: 'layer-z3', targetX: 475, targetY: 136, snapRadius: 70, orderRank: 2, dependencies: ['hammer_handle'],
+            dependencyMsg: 'Place the Handle first before attaching the Curved Claw!',
+            spotClue: 'Top-right of the hammer head',
+            fact: 'The curved back of the claw acts as a fulcrum, multiplying your pulling force to extract stubborn nails.',
+            previewBox: '0 0 85 56', previewSvg: `<path d="M 8 10 Q 56 10 76 44 L 50 50 Q 36 32 8 36 Z" fill="url(#steelGrad)" stroke="#334155" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(475, 136)"><path d="M -40 -24 Q 15 -24 40 16 L 10 24 Q -7 4 -40 8 Z" fill="url(#steelGrad)" stroke="#334155" stroke-width="2"/></g>`
+          }
+        ]
+      },
+      {
+        levelNumber: 4,
+        category: 'Category 2 • 5 Subparts',
+        name: 'LED Flashlight',
+        intro: 'You wired up a portable electric circuit! Inside every flashlight, chemical energy from batteries becomes bright light.',
+        summaryBullets: [
+          '<strong>Battery Cells:</strong> Store chemical energy and push electrons through the circuit when switched on.',
+          '<strong>Slide Switch:</strong> Completes or breaks the metal conductive path to turn the beam on and off.',
+          '<strong>Reflector & Lens:</strong> A shiny parabolic cone gathers scattered LED light into a focused forward beam.'
+        ],
+        silhouetteSvg: `<rect x="220" y="162" width="260" height="66" rx="10" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/><polygon points="480,162 565,135 565,255 480,228" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/><rect x="565" y="135" width="18" height="120" rx="4" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/>`,
+        parts: [
+          {
+            id: 'flash_body', name: 'Aluminum Body', zLayer: 'layer-z2', targetX: 350, targetY: 195, snapRadius: 80, orderRank: 1, dependencies: [],
+            dependencyMsg: 'Start with the main Aluminum Body tube!',
+            spotClue: 'Main horizontal tube in the center-left',
+            fact: 'Many metal flashlight bodies actually carry the electrical current back from the bulb to the batteries!',
+            previewBox: '0 0 150 50', previewSvg: `<rect x="8" y="8" width="134" height="34" rx="6" fill="url(#flashlightBodyGrad)" stroke="#1e3a8a" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(350, 195)"><rect x="-130" y="-33" width="260" height="66" rx="8" fill="url(#flashlightBodyGrad)" stroke="#1e3a8a" stroke-width="2"/><rect x="-130" y="-33" width="26" height="66" rx="6" fill="#1e293b"/></g>`
+          },
+          {
+            id: 'flash_batteries', name: 'Battery Cells', zLayer: 'layer-z3', targetX: 325, targetY: 195, snapRadius: 75, orderRank: 2, dependencies: ['flash_body'],
+            dependencyMsg: 'Place the Aluminum Body first before loading the Battery Cells!',
+            spotClue: 'Inside the main Aluminum Body tube',
+            fact: 'Batteries are placed "+" to "–" in series so their voltages add together for a brighter light.',
+            previewBox: '0 0 120 44', previewSvg: `<rect x="8" y="8" width="48" height="28" rx="4" fill="#10b981" stroke="#065f46" stroke-width="2"/><rect x="62" y="8" width="48" height="28" rx="4" fill="#10b981" stroke="#065f46" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(325, 195)"><rect x="-78" y="-19" width="72" height="38" rx="4" fill="#10b981" stroke="#065f46" stroke-width="2"/><rect x="-6" y="-8" width="6" height="16" fill="#cbd5e1"/><rect x="4" y="-19" width="72" height="38" rx="4" fill="#10b981" stroke="#065f46" stroke-width="2"/><rect x="76" y="-8" width="6" height="16" fill="#cbd5e1"/></g>`
+          },
+          {
+            id: 'flash_switch', name: 'Power Switch', zLayer: 'layer-z4', targetX: 415, targetY: 158, snapRadius: 65, orderRank: 2, dependencies: ['flash_body'],
+            dependencyMsg: 'Place the Aluminum Body first before snapping in the Power Switch!',
+            spotClue: 'Top edge of the Aluminum Body tube',
+            fact: 'Sliding the switch bridges a tiny metal gap, closing the circuit so electricity can flow.',
+            previewBox: '0 0 70 40', previewSvg: `<rect x="10" y="10" width="50" height="20" rx="6" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(415, 158)"><rect x="-24" y="-8" width="48" height="14" rx="5" fill="#f59e0b" stroke="#b45309" stroke-width="2"/></g>`
+          },
+          {
+            id: 'flash_reflector', name: 'Reflector Cone', zLayer: 'layer-z2', targetX: 522, targetY: 195, snapRadius: 75, orderRank: 3, dependencies: ['flash_body'],
+            dependencyMsg: 'Attach the Aluminum Body first before connecting the Reflector Cone!',
+            spotClue: 'Flared cone section on the right of the body',
+            fact: 'The mirror-coated cone uses a parabolic curve to aim stray light rays straight ahead.',
+            previewBox: '0 0 80 80', previewSvg: `<polygon points="10,22 68,6 68,74 10,58" fill="url(#steelGrad)" stroke="#334155" stroke-width="2"/><circle cx="24" cy="40" r="8" fill="url(#beamBulbGrad)"/>`,
+            boardSvg: `<g transform="translate(522, 195)"><polygon points="-42,-33 43,-60 43,60 -42,33" fill="url(#steelGrad)" stroke="#334155" stroke-width="2"/><circle cx="-22" cy="0" r="12" fill="url(#beamBulbGrad)"/></g>`
+          },
+          {
+            id: 'flash_lens', name: 'Front Lens', zLayer: 'layer-z3', targetX: 574, targetY: 195, snapRadius: 65, orderRank: 4, dependencies: ['flash_reflector'],
+            dependencyMsg: 'Attach the Reflector Cone first so the Front Lens can seal the head!',
+            spotClue: 'Far-right front opening of the Reflector Cone',
+            fact: 'A clear polycarbonate lens seals out dust and rain while letting 92% of the LED light pass through.',
+            previewBox: '0 0 40 90', previewSvg: `<rect x="10" y="6" width="20" height="78" rx="5" fill="url(#lensGrad)" stroke="#38bdf8" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(574, 195)"><rect x="-9" y="-60" width="18" height="120" rx="4" fill="url(#lensGrad)" stroke="#38bdf8" stroke-width="2"/></g>`
+          }
+        ]
+      },
+      {
+        levelNumber: 5,
+        category: 'Category 2 • 6 Subparts',
+        name: 'Prescription Eyeglasses',
+        intro: 'Great job, Junior Engineer! You combined optical lenses and structural supports into a precision vision instrument—without a permanent outline!',
+        summaryBullets: [
+          '<strong>Rims & Bridge:</strong> Hold both lenses at the exact distance matching your pupils (pupillary distance).',
+          '<strong>Curved Lenses:</strong> Bend (refract) incoming light rays so they focus sharply on the retina at the back of your eye.',
+          '<strong>Nose Pads & Temples:</strong> Create a balanced 3-point fit across your nose and ears so the lenses stay steady.'
+        ],
+        silhouetteSvg: `<path d="M 245 175 L 130 142 Q 112 138 106 155 L 102 172" fill="none" stroke="#94a3b8" stroke-width="3" stroke-dasharray="6 4" stroke-linecap="round" /><path d="M 555 175 L 670 142 Q 688 138 694 155 L 698 172" fill="none" stroke="#94a3b8" stroke-width="3" stroke-dasharray="6 4" stroke-linecap="round" /><rect x="245" y="150" width="130" height="92" rx="26" fill="rgba(148, 163, 184, 0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4" /><rect x="425" y="150" width="130" height="92" rx="26" fill="rgba(148, 163, 184, 0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4" /><path d="M 375 182 Q 400 170 425 182" fill="none" stroke="#94a3b8" stroke-width="3" stroke-dasharray="5 4" /><ellipse cx="381" cy="206" rx="6" ry="12" fill="rgba(148, 163, 184, 0.2)" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2" /><ellipse cx="419" cy="206" rx="6" ry="12" fill="rgba(148, 163, 184, 0.2)" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 2" />`,
+        parts: [
+          {
+            id: 'front_frame', name: 'Rims & Bridge', zLayer: 'layer-z3', targetX: 400, targetY: 196, snapRadius: 72, orderRank: 1, dependencies: [],
+            dependencyMsg: 'Start with the main Rims & Bridge foundation!',
+            spotClue: 'Dead center of the workbench (spanning left & right)',
+            fact: 'The Bridge rests over your nose and holds both rims at the exact spacing of your eyes.',
+            previewBox: '0 0 180 65', previewSvg: `<rect x="8" y="8" width="68" height="48" rx="14" fill="none" stroke="#1e293b" stroke-width="6"/><rect x="104" y="8" width="68" height="48" rx="14" fill="none" stroke="#1e293b" stroke-width="6"/><path d="M 76 24 Q 90 15 104 24" fill="none" stroke="#1e293b" stroke-width="6" stroke-linecap="round"/>`,
+            boardSvg: `<g transform="translate(400, 196)"><rect x="-155" y="-46" width="130" height="92" rx="26" fill="none" stroke="url(#frameGrad)" stroke-width="11"/><rect x="25" y="-46" width="130" height="92" rx="26" fill="none" stroke="url(#frameGrad)" stroke-width="11"/><path d="M -25 -14 Q 0 -28 25 -14" fill="none" stroke="url(#frameGrad)" stroke-width="10" stroke-linecap="round"/><rect x="-163" y="-24" width="10" height="14" rx="3" fill="#1e293b"/><rect x="153" y="-24" width="10" height="14" rx="3" fill="#1e293b"/></g>`
+          },
+          {
+            id: 'left_lens', name: 'Left Lens', zLayer: 'layer-z2', targetX: 310, targetY: 196, snapRadius: 62, orderRank: 2, dependencies: ['front_frame'],
+            dependencyMsg: 'Place the Rims & Bridge first so the Left Lens has a frame to lock into!',
+            spotClue: 'Inside the left rim opening (left of center)',
+            fact: 'Optical lenses bend (refract) light rays to correct nearsightedness or farsightedness.',
+            previewBox: '0 0 90 65', previewSvg: `<rect x="8" y="8" width="74" height="49" rx="15" fill="url(#lensGrad)" stroke="#38bdf8" stroke-width="2"/><path d="M 20 18 L 36 45 M 30 16 L 42 36" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.75"/>`,
+            boardSvg: `<g transform="translate(310, 196)"><rect x="-61" y="-42" width="122" height="84" rx="22" fill="url(#lensGrad)"/><path d="M -36 -24 L -12 22 M -22 -26 L -4 8" stroke="white" stroke-width="4" stroke-linecap="round" opacity="0.7"/></g>`
+          },
+          {
+            id: 'right_lens', name: 'Right Lens', zLayer: 'layer-z2', targetX: 490, targetY: 196, snapRadius: 62, orderRank: 2, dependencies: ['front_frame'],
+            dependencyMsg: 'Place the Rims & Bridge first so the Right Lens has a frame to lock into!',
+            spotClue: 'Inside the right rim opening (right of center)',
+            fact: 'Many modern lenses have an invisible anti-reflective coating that stops glare from screens.',
+            previewBox: '0 0 90 65', previewSvg: `<rect x="8" y="8" width="74" height="49" rx="15" fill="url(#lensGrad)" stroke="#38bdf8" stroke-width="2"/><path d="M 20 18 L 36 45 M 30 16 L 42 36" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.75"/>`,
+            boardSvg: `<g transform="translate(490, 196)"><rect x="-61" y="-42" width="122" height="84" rx="22" fill="url(#lensGrad)"/><path d="M -36 -24 L -12 22 M -22 -26 L -4 8" stroke="white" stroke-width="4" stroke-linecap="round" opacity="0.7"/></g>`
+          },
+          {
+            id: 'nose_pads', name: 'Nose Pads', zLayer: 'layer-z4', targetX: 400, targetY: 205, snapRadius: 58, orderRank: 3, dependencies: ['front_frame'],
+            dependencyMsg: 'Attach the Rims & Bridge first before clipping on the Nose Pads!',
+            spotClue: 'Directly beneath the center nose bridge',
+            fact: 'Soft silicone nose pads spread the weight of the glasses evenly so they don’t slip.',
+            previewBox: '0 0 80 55', previewSvg: `<ellipse cx="24" cy="28" rx="9" ry="18" fill="#cbd5e1" stroke="#475569" stroke-width="2.5"/><ellipse cx="56" cy="28" rx="9" ry="18" fill="#cbd5e1" stroke="#475569" stroke-width="2.5"/><path d="M 28 20 L 36 16 M 52 20 L 44 16" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/>`,
+            boardSvg: `<g transform="translate(400, 205)"><path d="M -25 -8 L -18 -2 M 25 -8 L 18 -2" stroke="#64748b" stroke-width="3" stroke-linecap="round"/><ellipse cx="-18" cy="3" rx="6.5" ry="13" fill="#e2e8f0" stroke="#475569" stroke-width="2"/><ellipse cx="18" cy="3" rx="6.5" ry="13" fill="#e2e8f0" stroke="#475569" stroke-width="2"/></g>`
+          },
+          {
+            id: 'left_temple', name: 'Left Temple (Arm)', zLayer: 'layer-z1', targetX: 175, targetY: 162, snapRadius: 72, orderRank: 3, dependencies: ['front_frame'],
+            dependencyMsg: 'Place the Rims & Bridge first so the Left Temple hinge can connect!',
+            spotClue: 'Far-left outer hinge of the left rim',
+            fact: 'The side arms are called "Temples"—their curved ear tips hook gently behind your ears.',
+            previewBox: '0 0 130 55', previewSvg: `<path d="M 118 36 L 26 16 Q 10 13 8 28 L 6 42" fill="none" stroke="#1e293b" stroke-width="7" stroke-linecap="round"/><circle cx="118" cy="36" r="4" fill="#94a3b8"/>`,
+            boardSvg: `<g transform="translate(175, 162)"><path d="M 65 16 L -45 -18 Q -65 -23 -71 -4 L -75 14" fill="none" stroke="url(#templeGrad)" stroke-width="9" stroke-linecap="round"/><circle cx="65" cy="16" r="3.5" fill="#cbd5e1"/></g>`
+          },
+          {
+            id: 'right_temple', name: 'Right Temple (Arm)', zLayer: 'layer-z1', targetX: 625, targetY: 162, snapRadius: 72, orderRank: 3, dependencies: ['front_frame'],
+            dependencyMsg: 'Place the Rims & Bridge first so the Right Temple hinge can connect!',
+            spotClue: 'Far-right outer hinge of the right rim',
+            fact: 'Tiny spring hinges inside the temples let the arms flex outward without snapping.',
+            previewBox: '0 0 130 55', previewSvg: `<path d="M 12 36 L 104 16 Q 120 13 122 28 L 124 42" fill="none" stroke="#1e293b" stroke-width="7" stroke-linecap="round"/><circle cx="12" cy="36" r="4" fill="#94a3b8"/>`,
+            boardSvg: `<g transform="translate(625, 162)"><path d="M -65 16 L 45 -18 Q 65 -23 71 -4 L 75 14" fill="none" stroke="url(#templeGrad)" stroke-width="9" stroke-linecap="round"/><circle cx="-65" cy="16" r="3.5" fill="#cbd5e1"/></g>`
+          }
+        ]
+      },
+      {
+        levelNumber: 10,
+        category: 'Category 3 • 8 Subparts',
+        name: 'Road Bicycle',
+        intro: 'Awesome spatial engineering! You rotated and assembled a human-powered machine that converts leg push into smooth rolling motion.',
+        summaryBullets: [
+          '<strong>Diamond Frame & Fork:</strong> Form a strong triangle structure that carries weight and steers the front wheel.',
+          '<strong>Front & Rear Wheels:</strong> Spoked wheels roll smoothly over the ground with low friction.',
+          '<strong>Handlebars, Saddle, Crankset & Chain:</strong> Let you steer, sit balanced, push pedals, and transfer torque to the rear wheel.'
+        ],
+        silhouetteSvg: `<circle cx="255" cy="245" r="58" fill="none" stroke="#94a3b8" stroke-width="3" stroke-dasharray="6 4"/><circle cx="545" cy="245" r="58" fill="none" stroke="#94a3b8" stroke-width="3" stroke-dasharray="6 4"/><polygon points="255,245 375,245 455,168 335,168" fill="none" stroke="#94a3b8" stroke-width="3" stroke-dasharray="6 4"/><line x1="455" y1="168" x2="545" y2="245" stroke="#94a3b8" stroke-width="3" stroke-dasharray="6 4"/>`,
+        parts: [
+          {
+            id: 'bike_frame', name: 'Diamond Frame', zLayer: 'layer-z2', targetX: 385, targetY: 206, snapRadius: 80, orderRank: 1, dependencies: [],
+            dependencyMsg: 'Start with the Diamond Frame!',
+            spotClue: 'Center of the board (blue diamond chassis)',
+            fact: 'Triangles are the strongest geometric shape in engineering—a diamond frame is made of two joined triangles!',
+            previewBox: '0 0 130 65', previewSvg: `<polygon points="15,55 68,55 105,15 45,15" fill="none" stroke="#2563eb" stroke-width="6" stroke-linejoin="round"/>`,
+            boardSvg: `<g transform="translate(385, 206)"><polygon points="-130,39 -10,39 70,-38 -50,-38" fill="none" stroke="#2563eb" stroke-width="9" stroke-linejoin="round"/></g>`
+          },
+          {
+            id: 'bike_fork', name: 'Front Fork', zLayer: 'layer-z2', targetX: 500, targetY: 206, snapRadius: 70, orderRank: 2, dependencies: ['bike_frame'],
+            dependencyMsg: 'Place the Diamond Frame first before attaching the Front Fork!',
+            spotClue: 'Front-right angled strut connecting frame to front wheel',
+            fact: 'The angled front fork gives the bike "trail," helping it stay balanced and self-correct as you ride.',
+            previewBox: '0 0 55 80', previewSvg: `<line x1="12" y1="10" x2="44" y2="70" stroke="#1e293b" stroke-width="7" stroke-linecap="round"/>`,
+            boardSvg: `<g transform="translate(500, 206)"><line x1="-45" y1="-38" x2="45" y2="39" stroke="#1e293b" stroke-width="9" stroke-linecap="round"/></g>`
+          },
+          {
+            id: 'bike_rear_wheel', name: 'Rear Wheel', zLayer: 'layer-z1', targetX: 255, targetY: 245, snapRadius: 75, orderRank: 2, dependencies: ['bike_frame'],
+            dependencyMsg: 'Place the Diamond Frame first before mounting the Rear Wheel!',
+            spotClue: 'Bottom-left rear axle corner',
+            fact: 'The rear wheel receives power from the chain and pushes the bicycle forward against the road.',
+            previewBox: '0 0 80 80', previewSvg: `<circle cx="40" cy="40" r="32" fill="none" stroke="#0f172a" stroke-width="6"/><circle cx="40" cy="40" r="6" fill="#94a3b8"/>`,
+            boardSvg: `<g transform="translate(255, 245)"><circle cx="0" cy="0" r="58" fill="none" stroke="#0f172a" stroke-width="8"/><circle cx="0" cy="0" r="52" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 6"/><circle cx="0" cy="0" r="8" fill="#64748b"/></g>`
+          },
+          {
+            id: 'bike_front_wheel', name: 'Front Wheel', zLayer: 'layer-z1', targetX: 545, targetY: 245, snapRadius: 75, orderRank: 3, dependencies: ['bike_fork'],
+            dependencyMsg: 'Attach the Front Fork first so the Front Wheel has an axle to spin on!',
+            spotClue: 'Bottom-right front fork axle',
+            fact: 'Tensioned wire spokes pull inward around the hub, turning the whole wheel into a lightweight truss.',
+            previewBox: '0 0 80 80', previewSvg: `<circle cx="40" cy="40" r="32" fill="none" stroke="#0f172a" stroke-width="6"/><circle cx="40" cy="40" r="6" fill="#94a3b8"/>`,
+            boardSvg: `<g transform="translate(545, 245)"><circle cx="0" cy="0" r="58" fill="none" stroke="#0f172a" stroke-width="8"/><circle cx="0" cy="0" r="52" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 6"/><circle cx="0" cy="0" r="8" fill="#64748b"/></g>`
+          },
+          {
+            id: 'bike_saddle', name: 'Saddle Seat', zLayer: 'layer-z3', targetX: 330, targetY: 152, snapRadius: 65, orderRank: 3, dependencies: ['bike_frame'],
+            dependencyMsg: 'Place the Diamond Frame first before attaching the Saddle Seat!',
+            spotClue: 'Top-left seat post of the frame',
+            fact: 'Raising or lowering the saddle lets your leg almost straighten at the bottom of a pedal stroke for maximum power.',
+            previewBox: '0 0 65 36', previewSvg: `<path d="M 8 14 Q 32 10 56 12 Q 46 24 22 24 Z" fill="#1e293b"/>`,
+            boardSvg: `<g transform="translate(330, 152)"><line x1="5" y1="16" x2="5" y2="28" stroke="#475569" stroke-width="6"/><path d="M -24 6 Q 8 2 30 4 Q 18 18 -10 18 Z" fill="#1e293b"/></g>`
+          },
+          {
+            id: 'bike_bars', name: 'Handlebars', zLayer: 'layer-z3', targetX: 445, targetY: 144, snapRadius: 65, orderRank: 3, dependencies: ['bike_fork'],
+            dependencyMsg: 'Attach the Front Fork first before mounting the Handlebars!',
+            spotClue: 'Top-right stem above the front fork',
+            fact: 'Wider handlebars act like a longer lever, making steering easier at low speeds.',
+            previewBox: '0 0 65 44', previewSvg: `<path d="M 10 14 L 34 14 Q 46 14 52 32" fill="none" stroke="#0f172a" stroke-width="6" stroke-linecap="round"/>`,
+            boardSvg: `<g transform="translate(445, 144)"><line x1="10" y1="12" x2="10" y2="24" stroke="#475569" stroke-width="6"/><path d="M -22 10 L 14 10 Q 26 10 32 28" fill="none" stroke="#0f172a" stroke-width="7" stroke-linecap="round"/></g>`
+          },
+          {
+            id: 'bike_crank', name: 'Crank & Pedal', zLayer: 'layer-z4', targetX: 375, targetY: 245, snapRadius: 65, orderRank: 3, dependencies: ['bike_frame'],
+            dependencyMsg: 'Place the Diamond Frame first before installing the Crank & Pedal!',
+            spotClue: 'Bottom-center bracket of the frame',
+            fact: 'The crank arm turns your up-and-down foot force into rotational torque around the bottom bracket.',
+            previewBox: '0 0 60 60', previewSvg: `<circle cx="24" cy="24" r="14" fill="none" stroke="#475569" stroke-width="4"/><line x1="24" y1="24" x2="44" y2="44" stroke="#1e293b" stroke-width="5" stroke-linecap="round"/>`,
+            boardSvg: `<g transform="translate(375, 245)"><circle cx="0" cy="0" r="20" fill="none" stroke="#475569" stroke-width="5"/><line x1="0" y1="0" x2="22" y2="24" stroke="#1e293b" stroke-width="6" stroke-linecap="round"/><rect x="14" y="22" width="18" height="6" rx="2" fill="#f59e0b"/></g>`
+          },
+          {
+            id: 'bike_chain', name: 'Drive Chain', zLayer: 'layer-z3', targetX: 315, targetY: 245, snapRadius: 70, orderRank: 4, dependencies: ['bike_rear_wheel', 'bike_crank'],
+            dependencyMsg: 'Mount the Rear Wheel and Crank first so the Drive Chain can link them!',
+            spotClue: 'Between the Rear Wheel hub and the Crankset',
+            fact: 'A roller chain transfers motion without slipping, even when you push hard uphill.',
+            previewBox: '0 0 110 40', previewSvg: `<ellipse cx="55" cy="20" rx="46" ry="12" fill="none" stroke="#64748b" stroke-width="4" stroke-dasharray="5 3"/>`,
+            boardSvg: `<g transform="translate(315, 245)"><polygon points="-60,-10 60,-18 60,18 -60,10" fill="none" stroke="#64748b" stroke-width="4" stroke-linejoin="round"/></g>`
+          }
+        ]
+      },
+      {
+        levelNumber: 15,
+        category: 'Category 3 • 11 Subparts',
+        name: 'DSLR Camera',
+        intro: 'Master Engineer! You assembled a precision camera from the body out—every optical and mechanical step in true engineering order!',
+        summaryBullets: [
+          '<strong>Camera Body, Grip & Lens Mount:</strong> Form a light-tight chamber around the sensor and lock lenses accurately in place.',
+          '<strong>Optical Lens Barrel, Zoom Ring & Front Glass:</strong> Focus incoming light onto the image sensor with minimal distortion.',
+          '<strong>Viewfinder, Mode Dial, Shutter Button & Flash:</strong> Let you frame shots, pick exposure modes, capture the moment, and add light.'
+        ],
+        silhouetteSvg: `<rect x="235" y="138" width="265" height="135" rx="18" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/><circle cx="345" cy="212" r="56" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="5 4"/>`,
+        parts: [
+          {
+            id: 'cam_body', name: 'Camera Body', zLayer: 'layer-z1', targetX: 368, targetY: 205, snapRadius: 80, orderRank: 1, dependencies: [],
+            dependencyMsg: 'Start with the Camera Body shell!',
+            spotClue: 'Center of the board (main rectangular body)',
+            fact: 'A camera body must be completely light-tight so stray light doesn’t ruin the photo before the shutter opens.',
+            previewBox: '0 0 130 75', previewSvg: `<rect x="8" y="10" width="114" height="55" rx="10" fill="#1e293b" stroke="#0f172a" stroke-width="2.5"/>`,
+            boardSvg: `<g transform="translate(368, 205)"><rect x="-132" y="-66" width="264" height="132" rx="18" fill="url(#frameGrad)" stroke="#0f172a" stroke-width="3"/></g>`
+          },
+          {
+            id: 'cam_grip', name: 'Hand Grip', zLayer: 'layer-z2', targetX: 472, targetY: 212, snapRadius: 65, orderRank: 2, dependencies: ['cam_body'],
+            dependencyMsg: 'Place the Camera Body first before attaching the Hand Grip!',
+            spotClue: 'Right edge of the Camera Body',
+            fact: 'A contoured rubberized grip lets you hold the camera steady with one hand while adjusting controls.',
+            previewBox: '0 0 48 85', previewSvg: `<rect x="8" y="6" width="32" height="73" rx="10" fill="#0f172a" stroke="#475569" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(472, 212)"><rect x="-24" y="-50" width="48" height="106" rx="14" fill="#0f172a" stroke="#334155" stroke-width="2"/></g>`
+          },
+          {
+            id: 'cam_mount', name: 'Lens Mount Ring', zLayer: 'layer-z2', targetX: 345, targetY: 212, snapRadius: 65, orderRank: 2, dependencies: ['cam_body'],
+            dependencyMsg: 'Place the Camera Body first before mounting the Lens Mount Ring!',
+            spotClue: 'Center-left face of the Camera Body',
+            fact: 'Precision metal mounts hold the lens at an exact distance (flange focal distance) from the sensor.',
+            previewBox: '0 0 80 80', previewSvg: `<circle cx="40" cy="40" r="30" fill="#475569" stroke="#cbd5e1" stroke-width="3"/>`,
+            boardSvg: `<g transform="translate(345, 212)"><circle cx="0" cy="0" r="56" fill="#475569" stroke="#cbd5e1" stroke-width="4"/></g>`
+          },
+          {
+            id: 'cam_barrel', name: 'Lens Barrel', zLayer: 'layer-z3', targetX: 345, targetY: 212, snapRadius: 65, orderRank: 3, dependencies: ['cam_mount'],
+            dependencyMsg: 'Attach the Lens Mount Ring first before fitting the Lens Barrel!',
+            spotClue: 'Inside the circular Lens Mount Ring',
+            fact: 'Inside a zoom lens, multiple glass elements slide along curved tracks to change focal length.',
+            previewBox: '0 0 74 74', previewSvg: `<circle cx="37" cy="37" r="28" fill="#1e293b" stroke="#64748b" stroke-width="3"/>`,
+            boardSvg: `<g transform="translate(345, 212)"><circle cx="0" cy="0" r="46" fill="#1e293b" stroke="#64748b" stroke-width="4"/></g>`
+          },
+          {
+            id: 'cam_glass', name: 'Front Glass Element', zLayer: 'layer-z4', targetX: 345, targetY: 212, snapRadius: 60, orderRank: 4, dependencies: ['cam_barrel'],
+            dependencyMsg: 'Fit the Lens Barrel first before inserting the Front Glass Element!',
+            spotClue: 'Center of the circular Lens Barrel',
+            fact: 'Multi-layer coatings on the front element reduce lens flare and boost color contrast.',
+            previewBox: '0 0 68 68', previewSvg: `<circle cx="34" cy="34" r="25" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/><path d="M 18 24 L 30 44 M 26 20 L 34 34" stroke="#7dd3fc" stroke-width="3" stroke-linecap="round"/>`,
+            boardSvg: `<g transform="translate(345, 212)"><circle cx="0" cy="0" r="35" fill="#0f172a" stroke="#38bdf8" stroke-width="3"/><path d="M -18 -14 L 4 22 M -6 -18 L 10 8" stroke="#7dd3fc" stroke-width="4" stroke-linecap="round" opacity="0.8"/></g>`
+          },
+          {
+            id: 'cam_viewfinder', name: 'Viewfinder Prism', zLayer: 'layer-z2', targetX: 308, targetY: 122, snapRadius: 60, orderRank: 3, dependencies: ['cam_body'],
+            dependencyMsg: 'Place the Camera Body first before seating the Viewfinder Prism!',
+            spotClue: 'Top-left roof of the Camera Body',
+            fact: 'A glass pentaprism bounces light so you look right through the actual lens before taking the shot.',
+            previewBox: '0 0 60 40', previewSvg: `<polygon points="8,32 18,8 42,8 52,32" fill="#334155" stroke="#0f172a" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(308, 122)"><polygon points="-24,18 -12,-18 12,-18 24,18" fill="#334155" stroke="#0f172a" stroke-width="2"/></g>`
+          },
+          {
+            id: 'cam_shutter', name: 'Shutter Button', zLayer: 'layer-z4', targetX: 462, targetY: 132, snapRadius: 55, orderRank: 3, dependencies: ['cam_body'],
+            dependencyMsg: 'Place the Camera Body first before mounting the Shutter Button!',
+            spotClue: 'Top-right above the Hand Grip',
+            fact: 'Half-pressing the shutter button focuses the lens; pressing all the way opens the shutter to expose the sensor.',
+            previewBox: '0 0 40 32', previewSvg: `<rect x="8" y="8" width="24" height="16" rx="5" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(462, 132)"><rect x="-14" y="-8" width="28" height="14" rx="5" fill="#cbd5e1" stroke="#475569" stroke-width="2"/></g>`
+          },
+          {
+            id: 'cam_dial', name: 'Mode Dial', zLayer: 'layer-z4', targetX: 258, targetY: 132, snapRadius: 55, orderRank: 3, dependencies: ['cam_body'],
+            dependencyMsg: 'Place the Camera Body first before attaching the Mode Dial!',
+            spotClue: 'Far top-left shoulder of the Camera Body',
+            fact: 'Turning the mode dial lets you switch between manual control, shutter priority, or action modes.',
+            previewBox: '0 0 44 32', previewSvg: `<rect x="6" y="8" width="32" height="16" rx="4" fill="#475569" stroke="#1e293b" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(258, 132)"><rect x="-18" y="-8" width="36" height="14" rx="4" fill="#475569" stroke="#1e293b" stroke-width="2"/></g>`
+          },
+          {
+            id: 'cam_flash', name: 'Pop-Up Flash', zLayer: 'layer-z3', targetX: 368, targetY: 128, snapRadius: 55, orderRank: 3, dependencies: ['cam_body'],
+            dependencyMsg: 'Place the Camera Body first before fitting the Pop-Up Flash!',
+            spotClue: 'Top-center next to the Viewfinder Prism',
+            fact: 'A flash tube fires a brief burst of bright light timed to match the moment the shutter is open.',
+            previewBox: '0 0 54 30', previewSvg: `<rect x="8" y="7" width="38" height="16" rx="4" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(368, 128)"><rect x="-22" y="-8" width="44" height="14" rx="4" fill="#f8fafc" stroke="#64748b" stroke-width="2"/></g>`
+          },
+          {
+            id: 'cam_lcd', name: 'Preview Screen', zLayer: 'layer-z3', targetX: 266, targetY: 174, snapRadius: 55, orderRank: 3, dependencies: ['cam_body'],
+            dependencyMsg: 'Place the Camera Body first before mounting the Preview Screen!',
+            spotClue: 'Upper-left face of the Camera Body',
+            fact: 'The rear LCD screen lets you review your photo right after capture and check settings.',
+            previewBox: '0 0 44 44', previewSvg: `<rect x="7" y="7" width="30" height="30" rx="4" fill="#0ea5e9" stroke="#0369a1" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(266, 174)"><rect x="-14" y="-16" width="28" height="32" rx="4" fill="#0ea5e9" stroke="#0369a1" stroke-width="2"/></g>`
+          },
+          {
+            id: 'cam_strap', name: 'Neck Strap Lug', zLayer: 'layer-z4', targetX: 235, targetY: 215, snapRadius: 55, orderRank: 3, dependencies: ['cam_body'],
+            dependencyMsg: 'Place the Camera Body first before attaching the Neck Strap Lug!',
+            spotClue: 'Far-left side wall of the Camera Body',
+            fact: 'Forged metal lugs anchor a shoulder strap so your camera stays safe while you walk.',
+            previewBox: '0 0 32 36', previewSvg: `<circle cx="16" cy="18" r="8" fill="none" stroke="#eab308" stroke-width="4"/>`,
+            boardSvg: `<g transform="translate(235, 215)"><circle cx="0" cy="0" r="7" fill="none" stroke="#eab308" stroke-width="3.5"/></g>`
+          }
+        ]
+      },
+      {
+        levelNumber: 18,
+        category: 'Category 3 • 11 Subparts',
+        name: 'Space Launch Rocket',
+        intro: '3… 2… 1… Liftoff! You stacked a multi-stage orbital rocket from the engine bells up to the escape tower.',
+        summaryBullets: [
+          '<strong>First Stage Booster & Fins:</strong> Burn propellant at liftoff while aerodynamic fins stabilize flight through the lower atmosphere.',
+          '<strong>Interstage & Second Stage:</strong> Separates once the lower fuel is spent so a lighter upper stage can reach orbital speed.',
+          '<strong>Payload Fairing, Crew Capsule & Escape Tower:</strong> Protect astronauts and satellites from aerodynamic heating during ascent.'
+        ],
+        silhouetteSvg: `<rect x="372" y="160" width="56" height="145" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/><polygon points="372,160 400,82 428,160" fill="rgba(148,163,184,0.12)" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/>`,
+        parts: [
+          {
+            id: 'rkt_stage1', name: 'First Stage Tank', zLayer: 'layer-z2', targetX: 400, targetY: 245, snapRadius: 75, orderRank: 1, dependencies: [],
+            dependencyMsg: 'Start with the First Stage Tank at the bottom of the stack!',
+            spotClue: 'Lower-center core column of the rocket',
+            fact: 'The first stage holds liquid fuel and liquid oxygen—accounting for over 80% of the rocket’s liftoff mass!',
+            previewBox: '0 0 56 95', previewSvg: `<rect x="12" y="6" width="32" height="83" rx="4" fill="#f8fafc" stroke="#334155" stroke-width="2.5"/>`,
+            boardSvg: `<g transform="translate(400, 245)"><rect x="-26" y="-52" width="52" height="104" rx="4" fill="#f8fafc" stroke="#334155" stroke-width="2.5"/><rect x="-26" y="25" width="52" height="16" fill="#1e293b"/></g>`
+          },
+          {
+            id: 'rkt_nozzle_c', name: 'Center Engine Bell', zLayer: 'layer-z1', targetX: 400, targetY: 312, snapRadius: 60, orderRank: 2, dependencies: ['rkt_stage1'],
+            dependencyMsg: 'Place the First Stage Tank first before mounting the Center Engine Bell!',
+            spotClue: 'Bottom exhaust nozzle under the First Stage Tank',
+            fact: 'Bell-shaped nozzles accelerate hot exhaust gases downward, pushing the rocket upward (Newton’s Third Law).',
+            previewBox: '0 0 40 36', previewSvg: `<polygon points="12,6 28,6 34,30 6,30" fill="#475569" stroke="#1e293b" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(400, 312)"><polygon points="-10,-14 10,-14 16,14 -16,14" fill="#475569" stroke="#1e293b" stroke-width="2"/></g>`
+          },
+          {
+            id: 'rkt_fin_l', name: 'Left Stabilizer Fin', zLayer: 'layer-z1', targetX: 356, targetY: 278, snapRadius: 65, orderRank: 2, dependencies: ['rkt_stage1'],
+            dependencyMsg: 'Place the First Stage Tank first before attaching the Left Stabilizer Fin!',
+            spotClue: 'Bottom-left wing fin on the First Stage Tank',
+            fact: 'Tail fins keep the center of pressure behind the center of mass so the rocket flies straight like an arrow.',
+            previewBox: '0 0 44 54', previewSvg: `<polygon points="36,8 36,46 8,46" fill="#ef4444" stroke="#991b1b" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(356, 278)"><polygon points="18,-22 18,22 -18,22" fill="url(#redPaintGrad)" stroke="#991b1b" stroke-width="2"/></g>`
+          },
+          {
+            id: 'rkt_fin_r', name: 'Right Stabilizer Fin', zLayer: 'layer-z1', targetX: 444, targetY: 278, snapRadius: 65, orderRank: 2, dependencies: ['rkt_stage1'],
+            dependencyMsg: 'Place the First Stage Tank first before attaching the Right Stabilizer Fin!',
+            spotClue: 'Bottom-right wing fin on the First Stage Tank',
+            fact: 'Symmetric fins balance aerodynamic drag on both sides during supersonic climb.',
+            previewBox: '0 0 44 54', previewSvg: `<polygon points="8,8 8,46 36,46" fill="#ef4444" stroke="#991b1b" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(444, 278)"><polygon points="-18,-22 -18,22 18,22" fill="url(#redPaintGrad)" stroke="#991b1b" stroke-width="2"/></g>`
+          },
+          {
+            id: 'rkt_booster_l', name: 'Port Side Booster', zLayer: 'layer-z3', targetX: 364, targetY: 245, snapRadius: 65, orderRank: 3, dependencies: ['rkt_stage1'],
+            dependencyMsg: 'Place the First Stage Tank first before strapping on the Port Side Booster!',
+            spotClue: 'Left side of the First Stage Tank',
+            fact: 'Strap-on boosters give extra thrust during the first two minutes of flight, then detach cleanly.',
+            previewBox: '0 0 28 85', previewSvg: `<rect x="7" y="6" width="14" height="73" rx="6" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(364, 245)"><rect x="-9" y="-44" width="18" height="88" rx="8" fill="url(#steelGrad)" stroke="#475569" stroke-width="2"/></g>`
+          },
+          {
+            id: 'rkt_booster_r', name: 'Starboard Booster', zLayer: 'layer-z3', targetX: 436, targetY: 245, snapRadius: 65, orderRank: 3, dependencies: ['rkt_stage1'],
+            dependencyMsg: 'Place the First Stage Tank first before strapping on the Starboard Booster!',
+            spotClue: 'Right side of the First Stage Tank',
+            fact: 'Twin boosters must ignite within milliseconds of each other so the rocket doesn’t tilt.',
+            previewBox: '0 0 28 85', previewSvg: `<rect x="7" y="6" width="14" height="73" rx="6" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(436, 245)"><rect x="-9" y="-44" width="18" height="88" rx="8" fill="url(#steelGrad)" stroke="#475569" stroke-width="2"/></g>`
+          },
+          {
+            id: 'rkt_interstage', name: 'Interstage Ring', zLayer: 'layer-z3', targetX: 400, targetY: 185, snapRadius: 60, orderRank: 3, dependencies: ['rkt_stage1'],
+            dependencyMsg: 'Place the First Stage Tank first before mounting the Interstage Ring!',
+            spotClue: 'Collar ring right on top of the First Stage Tank',
+            fact: 'The interstage ring houses pneumatic pushers that safely separate the first and second stages.',
+            previewBox: '0 0 60 26', previewSvg: `<rect x="8" y="6" width="44" height="14" fill="#1e293b"/>`,
+            boardSvg: `<g transform="translate(400, 185)"><rect x="-26" y="-8" width="52" height="16" fill="#1e293b"/></g>`
+          },
+          {
+            id: 'rkt_stage2', name: 'Second Stage', zLayer: 'layer-z2', targetX: 400, targetY: 152, snapRadius: 65, orderRank: 4, dependencies: ['rkt_interstage'],
+            dependencyMsg: 'Mount the Interstage Ring first before stacking the Second Stage!',
+            spotClue: 'Upper cylindrical stage above the Interstage Ring',
+            fact: 'Operating in the near-vacuum of space, the second stage accelerates the payload to 28,000 km/h!',
+            previewBox: '0 0 54 54', previewSvg: `<rect x="10" y="6" width="34" height="42" rx="3" fill="#f8fafc" stroke="#334155" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(400, 152)"><rect x="-24" y="-25" width="48" height="50" rx="3" fill="#f8fafc" stroke="#334155" stroke-width="2.5"/></g>`
+          },
+          {
+            id: 'rkt_capsule', name: 'Crew Capsule', zLayer: 'layer-z3', targetX: 400, targetY: 108, snapRadius: 60, orderRank: 5, dependencies: ['rkt_stage2'],
+            dependencyMsg: 'Stack the Second Stage first before attaching the Crew Capsule!',
+            spotClue: 'Cone-shaped nose cabin atop the Second Stage',
+            fact: 'A heat shield on the bottom of the capsule protects astronauts during fiery atmospheric re-entry.',
+            previewBox: '0 0 54 44', previewSvg: `<polygon points="10,36 18,8 36,8 44,36" fill="#e2e8f0" stroke="#334155" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(400, 108)"><polygon points="-24,19 -14,-19 14,-19 24,19" fill="#e2e8f0" stroke="#334155" stroke-width="2.5"/><circle cx="0" cy="2" r="6" fill="#38bdf8"/></g>`
+          },
+          {
+            id: 'rkt_tower', name: 'Launch Escape Tower', zLayer: 'layer-z4', targetX: 400, targetY: 72, snapRadius: 55, orderRank: 6, dependencies: ['rkt_capsule'],
+            dependencyMsg: 'Attach the Crew Capsule first before installing the Launch Escape Tower!',
+            spotClue: 'Very top spire above the Crew Capsule',
+            fact: 'If an emergency happens on the launchpad, small solid rockets on the escape tower pull the capsule to safety.',
+            previewBox: '0 0 32 44', previewSvg: `<polygon points="16,4 22,38 10,38" fill="#ef4444"/>`,
+            boardSvg: `<g transform="translate(400, 72)"><polygon points="0,-18 7,17 -7,17" fill="#ef4444" stroke="#991b1b" stroke-width="1.5"/></g>`
+          },
+          {
+            id: 'rkt_flag', name: 'Mission Emblem', zLayer: 'layer-z4', targetX: 400, targetY: 225, snapRadius: 55, orderRank: 3, dependencies: ['rkt_stage1'],
+            dependencyMsg: 'Place the First Stage Tank first before applying the Mission Emblem!',
+            spotClue: 'Center badge on the First Stage Tank',
+            fact: 'High-contrast stripes and emblems on rocket hulls help tracking cameras measure roll and pitch during launch.',
+            previewBox: '0 0 36 36', previewSvg: `<circle cx="18" cy="18" r="10" fill="#2563eb" stroke="#f59e0b" stroke-width="3"/>`,
+            boardSvg: `<g transform="translate(400, 225)"><circle cx="0" cy="0" r="11" fill="#2563eb" stroke="#f59e0b" stroke-width="3"/></g>`
+          }
+        ]
+      },
+      {
+        levelNumber: 20,
+        category: 'Mystery Blueprint • 5 Subparts',
+        name: 'Stethoscope',
+        intro: 'Mystery Solved! You deduced and assembled a medical Stethoscope from its acoustic parts!',
+        summaryBullets: [
+          '<strong>Diaphragm & Bell (Chestpiece):</strong> Capture faint heartbeats and lung vibrations against a patient’s skin.',
+          '<strong>Flexible Acoustic Tubing:</strong> Channels sound pressure waves cleanly without losing volume.',
+          '<strong>Binaural Headset & Soft Eartips:</strong> Seal out room noise and direct sound straight into the doctor’s ears.'
+        ],
+        silhouetteSvg: `<circle cx="290" cy="245" r="34" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="5 4"/><path d="M 324 245 C 400 245 410 130 480 130" fill="none" stroke="#94a3b8" stroke-width="4" stroke-dasharray="6 4"/>`,
+        parts: [
+          {
+            id: 'steth_chest', name: 'Chestpiece Bell', zLayer: 'layer-z2', targetX: 290, targetY: 245, snapRadius: 75, orderRank: 1, dependencies: [],
+            riddle: 'Riddle: Which round metal disk is placed gently against a chest to pick up low-frequency heartbeat vibrations?',
+            spotClue: 'Bottom-left end of the stethoscope',
+            fact: 'Invented in 1816 by René Laennec, the chestpiece amplifies tiny internal body sounds.',
+            previewBox: '0 0 70 70', previewSvg: `<circle cx="35" cy="35" r="24" fill="url(#steelGrad)" stroke="#334155" stroke-width="3"/><circle cx="35" cy="35" r="14" fill="#cbd5e1"/>`,
+            boardSvg: `<g transform="translate(290, 245)"><circle cx="0" cy="0" r="32" fill="url(#steelGrad)" stroke="#334155" stroke-width="3"/><circle cx="0" cy="0" r="18" fill="#e2e8f0"/></g>`
+          },
+          {
+            id: 'steth_tube', name: 'Acoustic Tubing', zLayer: 'layer-z2', targetX: 402, targetY: 198, snapRadius: 80, orderRank: 2, dependencies: [],
+            riddle: 'Riddle: Which flexible hollow rubber pipe carries trapped sound waves from the chestpiece upward?',
+            spotClue: 'Center S-curve connecting bottom-left to top-right',
+            fact: 'Thick-walled PVC tubing prevents outside room noises from leaking into the sound channel.',
+            previewBox: '0 0 120 85', previewSvg: `<path d="M 12 72 C 62 72 62 14 108 14" fill="none" stroke="#2563eb" stroke-width="8" stroke-linecap="round"/>`,
+            boardSvg: `<g transform="translate(402, 198)"><path d="M -80 47 C -10 47 -10 -48 72 -48" fill="none" stroke="#2563eb" stroke-width="11" stroke-linecap="round"/></g>`
+          },
+          {
+            id: 'steth_binaural', name: 'Binaural Metal Arms', zLayer: 'layer-z3', targetX: 505, targetY: 142, snapRadius: 75, orderRank: 3, dependencies: [],
+            riddle: 'Riddle: Which Y-shaped stainless steel tubes split the sound path left and right toward both ears?',
+            spotClue: 'Upper-right Y-fork branch',
+            fact: 'Angled binaural tubes match the natural forward tilt of your ear canals for clear sound.',
+            previewBox: '0 0 85 75', previewSvg: `<path d="M 10 42 L 36 42 L 72 14 M 36 42 L 72 64" fill="none" stroke="#64748b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`,
+            boardSvg: `<g transform="translate(505, 142)"><path d="M -32 8 L 0 8 L 46 -34 M 0 8 L 46 38" fill="none" stroke="url(#steelGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></g>`
+          },
+          {
+            id: 'steth_tip_top', name: 'Left Eartip', zLayer: 'layer-z4', targetX: 556, targetY: 104, snapRadius: 60, orderRank: 4, dependencies: [],
+            riddle: 'Riddle: Which soft silicone bud seals the upper metal arm comfortably inside an ear?',
+            spotClue: 'Top-right tip of the upper metal ear arm',
+            fact: 'A snug acoustic seal keeps quiet heart murmurs from escaping before reaching the eardrum.',
+            previewBox: '0 0 36 36', previewSvg: `<circle cx="18" cy="18" r="10" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(556, 104)"><circle cx="0" cy="0" r="9" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/></g>`
+          },
+          {
+            id: 'steth_tip_bot', name: 'Right Eartip', zLayer: 'layer-z4', targetX: 556, targetY: 184, snapRadius: 60, orderRank: 4, dependencies: [],
+            riddle: 'Riddle: Which soft silicone bud completes the acoustic seal on the lower metal arm?',
+            spotClue: 'Right tip of the lower metal ear arm',
+            fact: 'Doctors listen with both ears ("binaural") so their brain can focus on subtle rhythmic patterns.',
+            previewBox: '0 0 36 36', previewSvg: `<circle cx="18" cy="18" r="10" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(556, 184)"><circle cx="0" cy="0" r="9" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/></g>`
+          }
+        ]
+      },
+      {
+        levelNumber: 24,
+        category: 'Mystery Blueprint • 7 Subparts',
+        name: 'Trick Skateboard',
+        intro: 'Mystery Solved! You deduced and assembled a complete Trick Skateboard from its rolling hardware!',
+        summaryBullets: [
+          '<strong>Maple Wood Deck & Grip Tape:</strong> Seven layers of pressed Canadian maple give strength and pop while gritty tape locks shoes in place.',
+          '<strong>Metal Trucks:</strong> T-shaped aluminum axles pivot on urethane bushings so leaning turns the board smoothly.',
+          '<strong>Urethane Wheels & Bearings:</strong> Spin fast on low-friction steel ball bearings.'
+        ],
+        silhouetteSvg: `<rect x="230" y="166" width="340" height="22" rx="11" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="6 4"/><circle cx="290" cy="218" r="20" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="4 4"/><circle cx="510" cy="218" r="20" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="4 4"/>`,
+        parts: [
+          {
+            id: 'sk_deck', name: 'Maple Wood Deck', zLayer: 'layer-z2', targetX: 400, targetY: 176, snapRadius: 85, orderRank: 1, dependencies: [],
+            riddle: 'Riddle: Which curved wooden platform with upturned nose and tail supports the rider’s feet?',
+            spotClue: 'Center horizontal wooden board',
+            fact: 'Upward-curved ends ("kicktails") let riders pop the board into the air for ollies!',
+            previewBox: '0 0 160 40', previewSvg: `<path d="M 8 12 Q 24 24 44 24 L 116 24 Q 136 24 152 12 L 148 22 Q 134 32 116 32 L 44 32 Q 26 32 12 22 Z" fill="url(#woodGrad)" stroke="#451a03" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(400, 176)"><path d="M -175 -16 Q -145 0 -115 0 L 115 0 Q 145 0 175 -16 L 168 -4 Q 142 12 115 12 L -115 12 Q -142 12 -168 -4 Z" fill="url(#woodGrad)" stroke="#451a03" stroke-width="2"/></g>`
+          },
+          {
+            id: 'sk_griptape', name: 'Sandpaper Grip Tape', zLayer: 'layer-z3', targetX: 400, targetY: 168, snapRadius: 80, orderRank: 2, dependencies: [],
+            riddle: 'Riddle: Which rough, gritty black sheet sticks to the top surface so sneakers don’t slip off?',
+            spotClue: 'Top surface of the wooden deck',
+            fact: 'Silicon carbide grit creates high friction against rubber shoe soles for board control.',
+            previewBox: '0 0 150 24', previewSvg: `<path d="M 10 8 Q 26 16 44 16 L 106 16 Q 124 16 140 8" fill="none" stroke="#1e293b" stroke-width="6" stroke-linecap="round"/>`,
+            boardSvg: `<g transform="translate(400, 168)"><path d="M -168 -10 Q -142 4 -115 4 L 115 4 Q 142 4 168 -10" fill="none" stroke="#1e293b" stroke-width="6" stroke-linecap="round"/></g>`
+          },
+          {
+            id: 'sk_truck_l', name: 'Front Metal Truck', zLayer: 'layer-z2', targetX: 290, targetY: 198, snapRadius: 65, orderRank: 2, dependencies: [],
+            riddle: 'Riddle: Which T-shaped aluminum axle hanger bolts under the front to let the board steer when you lean?',
+            spotClue: 'Underneath the left side of the deck',
+            fact: 'Inside each truck, a rubbery kingpin bushing compresses as you lean, turning the axles inward.',
+            previewBox: '0 0 50 40', previewSvg: `<rect x="10" y="6" width="30" height="8" fill="#64748b"/><polygon points="16,14 34,14 28,32 22,32" fill="#94a3b8"/>`,
+            boardSvg: `<g transform="translate(290, 198)"><rect x="-18" y="-12" width="36" height="8" fill="#64748b"/><polygon points="-12,-4 12,-4 6,16 -6,16" fill="url(#steelGrad)" stroke="#334155" stroke-width="1.5"/></g>`
+          },
+          {
+            id: 'sk_truck_r', name: 'Rear Metal Truck', zLayer: 'layer-z2', targetX: 510, targetY: 198, snapRadius: 65, orderRank: 2, dependencies: [],
+            riddle: 'Riddle: Which matching aluminum axle assembly mounts under the rear tail?',
+            spotClue: 'Underneath the right side of the deck',
+            fact: 'Trucks are cast from lightweight aircraft-grade aluminum so they survive heavy stair landings.',
+            previewBox: '0 0 50 40', previewSvg: `<rect x="10" y="6" width="30" height="8" fill="#64748b"/><polygon points="16,14 34,14 28,32 22,32" fill="#94a3b8"/>`,
+            boardSvg: `<g transform="translate(510, 198)"><rect x="-18" y="-12" width="36" height="8" fill="#64748b"/><polygon points="-12,-4 12,-4 6,16 -6,16" fill="url(#steelGrad)" stroke="#334155" stroke-width="1.5"/></g>`
+          },
+          {
+            id: 'sk_wheel_l', name: 'Front Urethane Wheel', zLayer: 'layer-z3', targetX: 290, targetY: 218, snapRadius: 60, orderRank: 3, dependencies: [],
+            riddle: 'Riddle: Which bouncy polyurethane roller slides onto the front axle?',
+            spotClue: 'Bottom-left axle below the Front Truck',
+            fact: 'Polyurethane wheels grip smooth concrete without chunking apart over cracks and pebbles.',
+            previewBox: '0 0 44 44', previewSvg: `<circle cx="22" cy="22" r="15" fill="#f8fafc" stroke="#334155" stroke-width="3"/><circle cx="22" cy="22" r="5" fill="#ef4444"/>`,
+            boardSvg: `<g transform="translate(290, 218)"><circle cx="0" cy="0" r="19" fill="#f8fafc" stroke="#334155" stroke-width="3"/></g>`
+          },
+          {
+            id: 'sk_wheel_r', name: 'Rear Urethane Wheel', zLayer: 'layer-z3', targetX: 510, targetY: 218, snapRadius: 60, orderRank: 3, dependencies: [],
+            riddle: 'Riddle: Which matching polyurethane roller fits onto the rear axle?',
+            spotClue: 'Bottom-right axle below the Rear Truck',
+            fact: 'Smaller 52mm wheels accelerate quickly for street tricks, while larger 60mm wheels roll faster over rough ground.',
+            previewBox: '0 0 44 44', previewSvg: `<circle cx="22" cy="22" r="15" fill="#f8fafc" stroke="#334155" stroke-width="3"/><circle cx="22" cy="22" r="5" fill="#ef4444"/>`,
+            boardSvg: `<g transform="translate(510, 218)"><circle cx="0" cy="0" r="19" fill="#f8fafc" stroke="#334155" stroke-width="3"/></g>`
+          },
+          {
+            id: 'sk_bearings', name: 'Ball Bearings', zLayer: 'layer-z4', targetX: 400, targetY: 218, snapRadius: 85, orderRank: 4, dependencies: [],
+            riddle: 'Riddle: Which precision steel rings with tiny rolling spheres reduce friction inside the wheel hubs?',
+            spotClue: 'Center hubs of both wheels (center of wheel line)',
+            fact: 'Seven polished steel balls roll inside each bearing race so wheels spin smoothly with almost zero drag.',
+            previewBox: '0 0 70 36', previewSvg: `<circle cx="20" cy="18" r="10" fill="#ef4444" stroke="#1e293b" stroke-width="2"/><circle cx="50" cy="18" r="10" fill="#ef4444" stroke="#1e293b" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(400, 218)"><circle cx="-110" cy="0" r="7" fill="#ef4444" stroke="#1e293b" stroke-width="2"/><circle cx="110" cy="0" r="7" fill="#ef4444" stroke="#1e293b" stroke-width="2"/></g>`
+          }
+        ]
+      },
+      {
+        levelNumber: 30,
+        category: 'Child’s Room Discovery • 5 Subparts',
+        name: 'Table Lamp',
+        intro: 'Room Mystery Solved! You found all the scattered pieces in the bedroom and assembled a working Table Lamp!',
+        summaryBullets: [
+          '<strong>Weighted Base & Stem:</strong> Keep the lamp upright and lift the bulb safely above desk papers.',
+          '<strong>Socket & LED Bulb:</strong> Connect household electricity to a safe, cool-running LED emitter.',
+          '<strong>Diffuser Lampshade:</strong> Softens harsh glare so light spreads warmly across your desk.'
+        ],
+        silhouetteSvg: `<rect x="360" y="252" width="80" height="16" rx="6" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 4"/><rect x="392" y="196" width="16" height="56" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 4"/><polygon points="345,188 365,122 435,122 455,188" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 4"/>`,
+        parts: [
+          {
+            id: 'lamp_base', name: 'Weighted Base', zLayer: 'layer-z2', targetX: 400, targetY: 260, snapRadius: 75, orderRank: 1, dependencies: [],
+            spotClue: 'Bottom of the central Assembly Mat',
+            fact: 'A wide, weighted base lowers the center of gravity so the lamp won’t tip if bumped.',
+            previewBox: '0 0 80 30', previewSvg: `<rect x="8" y="8" width="64" height="14" rx="6" fill="#1e293b"/>`,
+            boardSvg: `<g transform="translate(400, 260)"><rect x="-42" y="-8" width="84" height="16" rx="7" fill="#1e293b" stroke="#0f172a" stroke-width="2"/></g>`
+          },
+          {
+            id: 'lamp_stem', name: 'Brass Stem', zLayer: 'layer-z1', targetX: 400, targetY: 224, snapRadius: 75, orderRank: 2, dependencies: [],
+            spotClue: 'Lower-center vertical post above the Weighted Base',
+            fact: 'The hollow brass stem hides the insulated electrical cord safely inside.',
+            previewBox: '0 0 30 65', previewSvg: `<rect x="9" y="6" width="12" height="53" rx="3" fill="url(#brassGrad)"/>`,
+            boardSvg: `<g transform="translate(400, 224)"><rect x="-8" y="-28" width="16" height="56" rx="3" fill="url(#brassGrad)" stroke="#78350f" stroke-width="1.5"/></g>`
+          },
+          {
+            id: 'lamp_socket', name: 'Bulb Socket', zLayer: 'layer-z2', targetX: 400, targetY: 190, snapRadius: 70, orderRank: 2, dependencies: [],
+            spotClue: 'Center of the Assembly Mat (top of the Brass Stem)',
+            fact: 'The threaded screw socket (invented by Thomas Edison’s team) holds the bulb and connects live and neutral wires.',
+            previewBox: '0 0 36 32', previewSvg: `<rect x="8" y="6" width="20" height="20" rx="3" fill="#475569"/>`,
+            boardSvg: `<g transform="translate(400, 190)"><rect x="-11" y="-8" width="22" height="16" rx="3" fill="#475569" stroke="#1e293b" stroke-width="1.5"/></g>`
+          },
+          {
+            id: 'lamp_bulb', name: 'LED Light Bulb', zLayer: 'layer-z3', targetX: 400, targetY: 164, snapRadius: 70, orderRank: 3, dependencies: [],
+            spotClue: 'Upper-center above the Bulb Socket',
+            fact: 'LED bulbs use 80% less electricity than old incandescent bulbs and stay cool to the touch.',
+            previewBox: '0 0 40 48', previewSvg: `<circle cx="20" cy="18" r="12" fill="#fef08a" stroke="#f59e0b" stroke-width="2"/><rect x="14" y="29" width="12" height="10" fill="#94a3b8"/>`,
+            boardSvg: `<g transform="translate(400, 164)"><circle cx="0" cy="-4" r="14" fill="#fef08a" stroke="#f59e0b" stroke-width="2"/><rect x="-7" y="9" width="14" height="9" fill="#94a3b8"/></g>`
+          },
+          {
+            id: 'lamp_shade', name: 'Fabric Lampshade', zLayer: 'layer-z4', targetX: 400, targetY: 155, snapRadius: 80, orderRank: 4, dependencies: [],
+            spotClue: 'Upper half of the Assembly Mat over the bulb',
+            fact: 'A translucent lampshade scatters harsh point light into a soft, comfortable glow for reading.',
+            previewBox: '0 0 90 60', previewSvg: `<polygon points="10,50 24,10 66,10 80,50" fill="#fb923c" stroke="#9a3412" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(400, 155)"><polygon points="-55,33 -35,-33 35,-33 55,33" fill="#fb923c" fill-opacity="0.92" stroke="#9a3412" stroke-width="2.5"/></g>`
+          }
+        ]
+      },
+      {
+        levelNumber: 35,
+        category: 'Child’s Room Discovery • 6 Subparts',
+        name: 'Model Sailboat',
+        intro: 'Room Mystery Solved! You tracked down every nautical piece around the bedroom and built a Model Sailboat!',
+        summaryBullets: [
+          '<strong>Hull & Weighted Keel:</strong> Keep the boat floating upright so wind in the sails pushes it forward instead of tipping it over.',
+          '<strong>Mast & Boom:</strong> Form a sturdy L-shaped spar frame that holds the sails taut against the breeze.',
+          '<strong>Mainsail & Jib Sail:</strong> Act like vertical airplane wings, using wind pressure to pull the boat across the water.'
+        ],
+        silhouetteSvg: `<polygon points="275,222 525,222 490,256 310,256" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 4"/><line x1="400" y1="222" x2="400" y2="105" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="5 4"/>`,
+        parts: [
+          {
+            id: 'boat_hull', name: 'Wooden Hull', zLayer: 'layer-z2', targetX: 400, targetY: 238, snapRadius: 80, orderRank: 1, dependencies: [],
+            spotClue: 'Lower-center of the Assembly Mat',
+            fact: 'A streamlined hull parts water smoothly with minimal drag so even a gentle breeze moves the boat.',
+            previewBox: '0 0 120 36', previewSvg: `<polygon points="8,8 112,8 96,28 24,28" fill="url(#redPaintGrad)" stroke="#7f1d1d" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(400, 238)"><polygon points="-122,-16 122,-16 88,18 -88,18" fill="url(#redPaintGrad)" stroke="#7f1d1d" stroke-width="2.5"/></g>`
+          },
+          {
+            id: 'boat_keel', name: 'Ballast Keel', zLayer: 'layer-z1', targetX: 400, targetY: 266, snapRadius: 70, orderRank: 2, dependencies: [],
+            spotClue: 'Bottom edge beneath the Wooden Hull',
+            fact: 'The underwater keel stops the boat from sliding sideways in the wind and acts as a counterweight.',
+            previewBox: '0 0 44 32', previewSvg: `<polygon points="10,6 34,6 28,26 16,26" fill="#334155"/>`,
+            boardSvg: `<g transform="translate(400, 266)"><polygon points="-18,-10 18,-10 10,14 -10,14" fill="#334155" stroke="#0f172a" stroke-width="1.5"/></g>`
+          },
+          {
+            id: 'boat_mast', name: 'Vertical Mast', zLayer: 'layer-z2', targetX: 400, targetY: 164, snapRadius: 75, orderRank: 2, dependencies: [],
+            spotClue: 'Center vertical pole rising above the hull',
+            fact: 'The mast stands tall to catch faster, unobstructed wind higher above the water’s surface.',
+            previewBox: '0 0 24 85', previewSvg: `<rect x="9" y="6" width="6" height="73" rx="2" fill="url(#woodGrad)"/>`,
+            boardSvg: `<g transform="translate(400, 164)"><rect x="-4" y="-58" width="8" height="116" rx="2" fill="url(#woodGrad)" stroke="#451a03" stroke-width="1.5"/></g>`
+          },
+          {
+            id: 'boat_boom', name: 'Horizontal Boom', zLayer: 'layer-z3', targetX: 356, targetY: 206, snapRadius: 70, orderRank: 3, dependencies: [],
+            spotClue: 'Left of the Vertical Mast, just above the hull',
+            fact: 'Sailors swing the boom out or pull it in to trim the angle of the sail to the wind.',
+            previewBox: '0 0 80 22', previewSvg: `<rect x="6" y="8" width="68" height="6" rx="2" fill="url(#woodGrad)"/>`,
+            boardSvg: `<g transform="translate(356, 206)"><rect x="-44" y="-3.5" width="84" height="7" rx="2" fill="url(#woodGrad)" stroke="#451a03" stroke-width="1.5"/></g>`
+          },
+          {
+            id: 'boat_mainsail', name: 'Mainsail', zLayer: 'layer-z3', targetX: 354, targetY: 160, snapRadius: 75, orderRank: 3, dependencies: [],
+            spotClue: 'Upper-left of the Vertical Mast',
+            fact: 'Curved sails create a pressure difference—just like an airplane wing—pulling the sailboat forward.',
+            previewBox: '0 0 65 75', previewSvg: `<polygon points="56,8 56,66 10,66" fill="#ffffff" stroke="#64748b" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(354, 160)"><polygon points="42,-48 42,42 -42,42" fill="#ffffff" stroke="#64748b" stroke-width="2"/></g>`
+          },
+          {
+            id: 'boat_jib', name: 'Jib Foresail', zLayer: 'layer-z3', targetX: 446, targetY: 168, snapRadius: 75, orderRank: 3, dependencies: [],
+            spotClue: 'Upper-right of the Vertical Mast',
+            fact: 'The front jib sail funnels air smoothly across the mainsail, boosting total forward thrust.',
+            previewBox: '0 0 60 70', previewSvg: `<polygon points="10,10 10,60 52,60" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/>`,
+            boardSvg: `<g transform="translate(446, 168)"><polygon points="-42,-46 -42,36 46,36" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/></g>`
+          }
+        ]
+      }
+    ];
+
+    const ROOM_PALETTES = [
+      { name: 'Sunny Lemon', wall: '#fef9c3', trim: '#fde047', floor: '#d97706', floorLine: '#92400e', rugFill: '#93c5fd', rugStroke: '#2563eb', woodDark: '#78350f', woodMid: '#92400e', woodLight: '#b45309', sky: '#bae6fd', isNight: false },
+      { name: 'Mint Breeze', wall: '#d1fae5', trim: '#a7f3d0', floor: '#b45309', floorLine: '#78350f', rugFill: '#fde68a', rugStroke: '#d97706', woodDark: '#451a03', woodMid: '#78350f', woodLight: '#92400e', sky: '#e0f2fe', isNight: false },
+      { name: 'Sky Blue Studio', wall: '#e0f2fe', trim: '#bae6fd', floor: '#a16207', floorLine: '#713f12', rugFill: '#fecdd3', rugStroke: '#e11d48', woodDark: '#334155', woodMid: '#475569', woodLight: '#64748b', sky: '#fef08a', isNight: false },
+      { name: 'Lavender Loft', wall: '#ede9fe', trim: '#ddd6fe', floor: '#9a3412', floorLine: '#7c2d12', rugFill: '#a7f3d0', rugStroke: '#059669', woodDark: '#581c87', woodMid: '#6b21a8', woodLight: '#7e22ce', sky: '#bae6fd', isNight: false },
+      { name: 'Peach Sunset', wall: '#ffedd5', trim: '#fed7aa', floor: '#854d0e', floorLine: '#713f12', rugFill: '#c7d2fe', rugStroke: '#4f46e5', woodDark: '#7c2d12', woodMid: '#9a3412', woodLight: '#c2410c', sky: '#fbcfe8', isNight: false },
+      { name: 'Starlight Twilight', wall: '#dbeafe', trim: '#bfdbfe', floor: '#78350f', floorLine: '#451a03', rugFill: '#fde047', rugStroke: '#ca8a04', woodDark: '#1e293b', woodMid: '#334155', woodLight: '#475569', sky: '#1e1b4b', isNight: true }
+    ];
+
+    const ROOM_LAYOUTS = [
+      {
+        id: 'layout_a',
+        buildSvg: (p, bookColors) => `
+          <rect x="0" y="0" width="800" height="295" fill="${p.wall}"/>
+          <rect x="0" y="283" width="800" height="12" fill="${p.trim}"/>
+          <rect x="0" y="295" width="800" height="85" fill="${p.floor}"/>
+          <line x1="0" y1="295" x2="800" y2="295" stroke="${p.floorLine}" stroke-width="3"/>
+          <path d="M 190 22 Q 400 48 610 22" fill="none" stroke="#64748b" stroke-width="2"/>
+          <polygon points="230,27 246,29 238,44" fill="${bookColors[0]}"/>
+          <polygon points="310,34 326,35 318,50" fill="${bookColors[1]}"/>
+          <polygon points="470,35 486,34 478,50" fill="${bookColors[2]}"/>
+          <polygon points="550,29 566,27 558,44" fill="${bookColors[3]}"/>
+          <rect x="35" y="42" width="130" height="125" rx="8" fill="${p.sky}" stroke="${p.woodDark}" stroke-width="6"/>
+          ${p.isNight
+            ? `<circle cx="132" cy="72" r="13" fill="#fef08a"/><circle cx="66" cy="68" r="2.5" fill="white"/><circle cx="82" cy="86" r="2" fill="white"/>`
+            : `<circle cx="135" cy="72" r="14" fill="#fde047"/><ellipse cx="68" cy="78" rx="18" ry="8" fill="white" opacity="0.85"/>`}
+          <line x1="100" y1="42" x2="100" y2="167" stroke="${p.woodDark}" stroke-width="5"/>
+          <line x1="35" y1="104" x2="165" y2="104" stroke="${p.woodDark}" stroke-width="5"/>
+          <rect x="25" y="220" width="175" height="14" rx="3" fill="${p.woodLight}" stroke="${p.woodDark}" stroke-width="2"/>
+          <rect x="35" y="234" width="14" height="75" fill="${p.woodMid}"/>
+          <rect x="175" y="234" width="14" height="75" fill="${p.woodMid}"/>
+          <rect x="635" y="55" width="135" height="240" rx="4" fill="${p.woodMid}" stroke="${p.woodDark}" stroke-width="3"/>
+          <rect x="645" y="65" width="115" height="65" fill="${p.woodDark}"/>
+          <rect x="645" y="140" width="115" height="65" fill="${p.woodDark}"/>
+          <rect x="645" y="215" width="115" height="70" fill="${p.woodDark}"/>
+          <rect x="652" y="82" width="14" height="48" fill="${bookColors[0]}"/>
+          <rect x="668" y="88" width="12" height="42" fill="${bookColors[1]}"/>
+          <rect x="682" y="80" width="16" height="50" fill="${bookColors[2]}"/>
+          <rect x="720" y="156" width="15" height="49" fill="${bookColors[3]}"/>
+          <rect x="737" y="162" width="14" height="43" fill="${bookColors[4]}"/>
+          <ellipse cx="400" cy="336" rx="195" ry="26" fill="${p.rugFill}" stroke="${p.rugStroke}" stroke-width="3"/>
+        `,
+        spots: [
+          { x: 112, y: 206, clue: 'On top of the study desk on the left' },
+          { x: 732, y: 108, clue: 'On the top shelf of the bookcase on the right' },
+          { x: 672, y: 184, clue: 'On the middle shelf of the bookcase on the right' },
+          { x: 695, y: 256, clue: 'On the bottom shelf of the bookcase on the right' },
+          { x: 300, y: 334, clue: 'On the left side of the floor rug' },
+          { x: 500, y: 334, clue: 'On the right side of the floor rug' },
+          { x: 64, y: 132, clue: 'On the windowsill on the left' }
+        ]
+      },
+      {
+        id: 'layout_b',
+        buildSvg: (p, bookColors) => `
+          <rect x="0" y="0" width="800" height="295" fill="${p.wall}"/>
+          <rect x="0" y="283" width="800" height="12" fill="${p.trim}"/>
+          <rect x="0" y="295" width="800" height="85" fill="${p.floor}"/>
+          <line x1="0" y1="295" x2="800" y2="295" stroke="${p.floorLine}" stroke-width="3"/>
+          <rect x="235" y="18" width="56" height="44" rx="4" fill="white" stroke="${p.woodDark}" stroke-width="3"/>
+          <circle cx="263" cy="40" r="12" fill="${bookColors[2]}"/>
+          <rect x="30" y="55" width="135" height="240" rx="4" fill="${p.woodMid}" stroke="${p.woodDark}" stroke-width="3"/>
+          <rect x="40" y="65" width="115" height="65" fill="${p.woodDark}"/>
+          <rect x="40" y="140" width="115" height="65" fill="${p.woodDark}"/>
+          <rect x="40" y="215" width="115" height="70" fill="${p.woodDark}"/>
+          <rect x="115" y="82" width="14" height="48" fill="${bookColors[1]}"/>
+          <rect x="131" y="86" width="15" height="44" fill="${bookColors[3]}"/>
+          <rect x="48" y="156" width="15" height="49" fill="${bookColors[0]}"/>
+          <rect x="65" y="160" width="14" height="45" fill="${bookColors[4]}"/>
+          <rect x="625" y="42" width="140" height="120" rx="8" fill="${p.sky}" stroke="${p.woodDark}" stroke-width="6"/>
+          ${p.isNight
+            ? `<circle cx="660" cy="70" r="12" fill="#fef08a"/><circle cx="725" cy="68" r="2.5" fill="white"/><circle cx="740" cy="88" r="2" fill="white"/>`
+            : `<circle cx="662" cy="72" r="14" fill="#fde047"/><ellipse cx="722" cy="82" rx="20" ry="9" fill="white" opacity="0.85"/>`}
+          <line x1="695" y1="42" x2="695" y2="162" stroke="${p.woodDark}" stroke-width="5"/>
+          <line x1="625" y1="102" x2="765" y2="102" stroke="${p.woodDark}" stroke-width="5"/>
+          <rect x="605" y="228" width="170" height="67" rx="6" fill="${p.woodLight}" stroke="${p.woodDark}" stroke-width="3"/>
+          <rect x="600" y="218" width="180" height="12" rx="4" fill="${p.woodMid}" stroke="${p.woodDark}" stroke-width="2"/>
+          <rect x="215" y="312" width="370" height="48" rx="22" fill="${p.rugFill}" stroke="${p.rugStroke}" stroke-width="3"/>
+        `,
+        spots: [
+          { x: 690, y: 204, clue: 'On top of the wooden toy chest on the right' },
+          { x: 74, y: 108, clue: 'On the top shelf of the bookcase on the left' },
+          { x: 118, y: 184, clue: 'On the middle shelf of the bookcase on the left' },
+          { x: 96, y: 256, clue: 'On the bottom shelf of the bookcase on the left' },
+          { x: 295, y: 336, clue: 'On the left side of the rectangular floor rug' },
+          { x: 505, y: 336, clue: 'On the right side of the rectangular floor rug' },
+          { x: 725, y: 132, clue: 'On the windowsill on the right' }
+        ]
+      },
+      {
+        id: 'layout_c',
+        buildSvg: (p, bookColors) => `
+          <rect x="0" y="0" width="800" height="295" fill="${p.wall}"/>
+          <rect x="0" y="283" width="800" height="12" fill="${p.trim}"/>
+          <rect x="0" y="295" width="800" height="85" fill="${p.floor}"/>
+          <line x1="0" y1="295" x2="800" y2="295" stroke="${p.floorLine}" stroke-width="3"/>
+          <rect x="30" y="102" width="155" height="10" rx="3" fill="${p.woodMid}" stroke="${p.woodDark}" stroke-width="2"/>
+          <rect x="38" y="64" width="14" height="38" fill="${bookColors[0]}"/>
+          <rect x="54" y="70" width="13" height="32" fill="${bookColors[2]}"/>
+          <rect x="30" y="176" width="155" height="10" rx="3" fill="${p.woodMid}" stroke="${p.woodDark}" stroke-width="2"/>
+          <rect x="20" y="242" width="185" height="53" rx="8" fill="${p.woodMid}" stroke="${p.woodDark}" stroke-width="3"/>
+          <rect x="26" y="226" width="173" height="20" rx="8" fill="${bookColors[1]}" stroke="${p.woodDark}" stroke-width="2"/>
+          <rect x="28" y="210" width="42" height="20" rx="6" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+          <circle cx="695" cy="95" r="54" fill="${p.sky}" stroke="${p.woodDark}" stroke-width="7"/>
+          <line x1="695" y1="41" x2="695" y2="149" stroke="${p.woodDark}" stroke-width="4"/>
+          <line x1="641" y1="95" x2="749" y2="95" stroke="${p.woodDark}" stroke-width="4"/>
+          <rect x="600" y="216" width="175" height="14" rx="3" fill="${p.woodLight}" stroke="${p.woodDark}" stroke-width="2"/>
+          <rect x="612" y="230" width="14" height="75" fill="${p.woodMid}"/>
+          <rect x="748" y="230" width="14" height="75" fill="${p.woodMid}"/>
+          <ellipse cx="400" cy="336" rx="190" ry="26" fill="${p.rugFill}" stroke="${p.rugStroke}" stroke-width="3"/>
+          <ellipse cx="400" cy="336" rx="145" ry="16" fill="none" stroke="white" stroke-width="2" stroke-dasharray="6 4"/>
+        `,
+        spots: [
+          { x: 125, y: 88, clue: 'On the upper floating wall shelf on the left' },
+          { x: 112, y: 162, clue: 'On the lower floating wall shelf on the left' },
+          { x: 135, y: 214, clue: 'On the cozy daybed cushion on the bottom-left' },
+          { x: 688, y: 202, clue: 'On top of the workbench desk on the right' },
+          { x: 295, y: 336, clue: 'On the left side of the patterned floor rug' },
+          { x: 505, y: 336, clue: 'On the right side of the patterned floor rug' },
+          { x: 400, y: 336, clue: 'In the center of the patterned floor rug' }
+        ]
+      }
+    ];
+
+    const BOOK_COLOR_POOL = ['#ef4444', '#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ec4899', '#06b6d4'];
+    let lastRoomPaletteIdx = -1;
+    let lastRoomLayoutIdx = -1;
+
+    function generateRandomChildRoom(parts) {
+      let pIdx = Math.floor(Math.random() * ROOM_PALETTES.length);
+      if (pIdx === lastRoomPaletteIdx) pIdx = (pIdx + 1) % ROOM_PALETTES.length;
+      lastRoomPaletteIdx = pIdx;
+      const palette = ROOM_PALETTES[pIdx];
+
+      let lIdx = Math.floor(Math.random() * ROOM_LAYOUTS.length);
+      if (lIdx === lastRoomLayoutIdx) lIdx = (lIdx + 1) % ROOM_LAYOUTS.length;
+      lastRoomLayoutIdx = lIdx;
+      const layout = ROOM_LAYOUTS[lIdx];
+
+      const shuffledColors = [...BOOK_COLOR_POOL].sort(() => Math.random() - 0.5);
+      mainEl.style.backgroundColor = palette.wall;
+
+      roomBgLayer.innerHTML = `
+        ${layout.buildSvg(palette, shuffledColors)}
+        <rect x="225" y="72" width="350" height="215" rx="16" fill="rgba(255,255,255,0.88)" stroke="#3b82f6" stroke-width="2.5" stroke-dasharray="8 5"/>
+        <text x="400" y="94" text-anchor="middle" font-size="11" font-weight="800" fill="#1d4ed8" letter-spacing="1">ASSEMBLY MAT — DRAG HIDDEN PARTS HERE</text>
+      `;
+
+      const shuffledSpots = [...layout.spots].sort(() => Math.random() - 0.5);
+      parts.forEach((part, idx) => {
+        const spot = shuffledSpots[idx % shuffledSpots.length];
+        const jitterX = Math.floor(Math.random() * 21) - 10;
+        const jitterY = Math.floor(Math.random() * 7) - 3;
+        part.roomX = spot.x + jitterX;
+        part.roomY = spot.y + jitterY;
+        part.riddle = `Room Clue (${palette.name} Room): ${spot.clue}!`;
+      });
+    }
+
+    function getLevelRules(lvlNum) {
+      if (lvlNum <= 4) {
+        return { tierName: 'Levels 1–4', pillClass: '', showSilhouette: true, randomRotation: false, strictOrder: false, mysteryObject: false, roomScavenger: false, hintMode: 'none' };
+      } else if (lvlNum <= 9) {
+        return { tierName: 'Levels 5–9', pillClass: '', showSilhouette: false, randomRotation: false, strictOrder: false, mysteryObject: false, roomScavenger: false, hintMode: 'peek' };
+      } else if (lvlNum <= 14) {
+        return { tierName: 'Levels 10–14', pillClass: '', showSilhouette: false, randomRotation: true, strictOrder: false, mysteryObject: false, roomScavenger: false, hintMode: 'angle' };
+      } else if (lvlNum <= 19) {
+        return { tierName: 'Levels 15–19', pillClass: '', showSilhouette: false, randomRotation: true, strictOrder: true, mysteryObject: false, roomScavenger: false, hintMode: 'next' };
+      } else if (lvlNum <= 29) {
+        return { tierName: 'Levels 20–29 (Mystery)', pillClass: 'mystery', showSilhouette: false, randomRotation: true, strictOrder: false, mysteryObject: true, roomScavenger: false, hintMode: 'riddle_2step' };
+      } else {
+        return { tierName: 'Levels 30–40 (Child’s Room)', pillClass: 'room', showSilhouette: false, randomRotation: false, strictOrder: false, mysteryObject: true, roomScavenger: true, hintMode: 'riddle_2step' };
+      }
+    }
+
+    let currentLevelIndex = 0;
+    let partsState = [];
+    let draggingPart = null;
+    let silhouetteTimer = null;
+    let riddleHintStage = 0;
+    let activeHintPartId = null;
+    let failedAttempts = 0;
+
+    const mainEl = document.getElementById('main-workspace');
+    const svgEl = document.getElementById('assembly-svg');
+    const roomBgLayer = document.getElementById('room-bg-layer');
+    const roomScatterLayer = document.getElementById('room-scatter-layer');
+    const beaconLayer = document.getElementById('beacon-layer');
+    const silhouetteEl = document.getElementById('silhouette-layer');
+    const trayEl = document.getElementById('parts-tray');
+    const ghostEl = document.getElementById('drag-ghost');
+    const factDisplay = document.getElementById('fact-display');
+    const hintBtn = document.getElementById('hint-btn');
+    const progressText = document.getElementById('progress-text');
+    const progressFill = document.getElementById('progress-fill');
+    const ruleSummary = document.getElementById('rule-summary');
+    const trayTitleText = document.getElementById('tray-title-text');
+    const trayHelperText = document.getElementById('tray-helper-text');
+    const completeModal = document.getElementById('complete-modal');
+    const levelSelect = document.getElementById('level-select');
+    const prevLevelBtn = document.getElementById('prev-level-btn');
+    const nextLevelBtn = document.getElementById('next-level-btn');
+
+    function refreshLevelDropdown() {
+      const savedVal = levelSelect.value;
+      levelSelect.innerHTML = '';
+      LEVELS.forEach((lvl, idx) => {
+        const rules = getLevelRules(lvl.levelNumber);
+        const opt = document.createElement('option');
+        opt.value = idx;
+        const displayName = rules.mysteryObject ? '??? (Mystery Object)' : lvl.name;
+        opt.textContent = `Level ${lvl.levelNumber}: ${displayName}`;
+        levelSelect.appendChild(opt);
+      });
+      if (savedVal !== '') levelSelect.value = savedVal;
+    }
+    refreshLevelDropdown();
+
+    function loadLevel(index) {
+      currentLevelIndex = Math.max(0, Math.min(LEVELS.length - 1, index));
+      const level = LEVELS[currentLevelIndex];
+      const rules = getLevelRules(level.levelNumber);
+
+      clearTimeout(silhouetteTimer);
+      completeModal.classList.remove('open');
+      riddleHintStage = 0;
+      activeHintPartId = null;
+      failedAttempts = 0;
+      beaconLayer.innerHTML = '';
+
+      levelSelect.value = currentLevelIndex;
+      prevLevelBtn.disabled = currentLevelIndex === 0;
+      nextLevelBtn.disabled = currentLevelIndex === LEVELS.length - 1;
+
+      mainEl.classList.toggle('room-mode', rules.roomScavenger);
+      if (!rules.roomScavenger) {
+        mainEl.style.backgroundColor = '';
+      }
+      roomBgLayer.style.display = rules.roomScavenger ? 'block' : 'none';
+      roomScatterLayer.innerHTML = '';
+
+      const titleEl = document.getElementById('object-title');
+      document.getElementById('category-label').textContent = `Level ${level.levelNumber} • ${level.category}`;
+      if (rules.mysteryObject) {
+        titleEl.textContent = '??? (Deduce the Object!)';
+        titleEl.classList.add('mystery-title');
+      } else {
+        titleEl.textContent = level.name;
+        titleEl.classList.remove('mystery-title');
+      }
+
+      silhouetteEl.innerHTML = level.silhouetteSvg;
+
+      ['layer-z1', 'layer-z2', 'layer-z3', 'layer-z4'].forEach(id => {
+        document.getElementById(id).innerHTML = '';
+      });
+
+      const shuffled = [...level.parts].sort(() => Math.random() - 0.5);
+      const possibleAngles = [90, 180, 270];
+
+      partsState = shuffled.map(part => {
+        const randomAngle = rules.randomRotation
+          ? possibleAngles[Math.floor(Math.random() * possibleAngles.length)]
+          : 0;
+        return {
+          ...part,
+          placed: false,
+          rotation: randomAngle,
+          showAngleHint: false,
+          highlightHint: false
+        };
+      });
+
+      updateRuleUI(rules);
+      if (rules.roomScavenger) {
+        generateRandomChildRoom(partsState);
+        renderRoomScatter();
+      }
+      renderTray(rules);
+      updateProgress();
+
+      if (rules.roomScavenger) {
+        showFact(`🔍 New Room Layout: Find the ${level.parts.length} parts hidden around the bedroom and assemble the mystery object in any order!`, false);
+      } else if (rules.mysteryObject) {
+        showFact(`🕵️ Mystery Blueprint: Study the part names and shapes—assemble them in any order to reveal the object!`, false);
+      } else {
+        showFact(`🔧 Level ${level.levelNumber}: Drag each component of the ${level.name} onto the workbench!`, false);
+      }
+    }
+
+    function updateRuleUI(rules) {
+      if (rules.hintMode === 'none') {
+        silhouetteEl.classList.remove('silhouette-hidden');
+        silhouetteEl.classList.add('silhouette-visible');
+        hintBtn.disabled = true;
+        hintBtn.textContent = '💡 No Hint (Lv 1–4)';
+        ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span>Silhouette visible • Any order • Pre-aligned • Auto-help after 5 tries</span>`;
+        trayTitleText.textContent = 'Component Tray';
+        trayHelperText.textContent = 'Drag each component onto its matching outline on the blueprint.';
+      } else if (rules.hintMode === 'peek') {
+        silhouetteEl.classList.remove('silhouette-visible');
+        silhouetteEl.classList.add('silhouette-hidden');
+        hintBtn.disabled = false;
+        hintBtn.textContent = '👁 Peek Outline (3s)';
+        ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span>Blank board • Any order • Hint shows outline for 3s</span>`;
+        trayTitleText.textContent = 'Component Tray';
+        trayHelperText.textContent = 'Place parts on the blank workbench. Need help? Click Peek Outline!';
+      } else if (rules.hintMode === 'angle') {
+        silhouetteEl.classList.remove('silhouette-visible');
+        silhouetteEl.classList.add('silhouette-hidden');
+        hintBtn.disabled = false;
+        hintBtn.textContent = '🧭 Show Rotation Angle';
+        ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span>Blank board • Random angles (Click ↻) • Hint shows angle</span>`;
+        trayTitleText.textContent = 'Component Tray';
+        trayHelperText.textContent = 'Click a part or its ↻ button to rotate it to 0° upright before dragging!';
+      } else if (rules.hintMode === 'next') {
+        silhouetteEl.classList.remove('silhouette-visible');
+        silhouetteEl.classList.add('silhouette-hidden');
+        hintBtn.disabled = false;
+        hintBtn.textContent = '✨ Highlight Next Piece';
+        ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span>Blank board • Random angles • Strict order • Hint highlights next piece</span>`;
+        trayTitleText.textContent = 'Component Tray';
+        trayHelperText.textContent = 'Build from the foundation up! Rotate parts to 0° and attach base parts first.';
+      } else if (rules.hintMode === 'riddle_2step' && !rules.roomScavenger) {
+        silhouetteEl.classList.remove('silhouette-visible');
+        silhouetteEl.classList.add('silhouette-hidden');
+        hintBtn.disabled = false;
+        hintBtn.textContent = '❓ Hint 1: Subpart Question';
+        ruleSummary.innerHTML = `<span class="rule-pill ${rules.pillClass}">${rules.tierName}</span><span>Object hidden (???) • Any order works! • 2-Step Hint (Question → Reveal)</span>`;
+        trayTitleText.textContent = 'Mystery Components';
+        trayHelperText.textContent = 'Assemble in any order! Rotate parts upright (0°) and deduce the mystery object.';
+      } else if (rules.roomScavenger) {
+        silhouetteEl.classList.remove('silhouette-visible');
+        silhouetteEl.classList.add('silhouette-hidden');
+        hintBtn.disabled = false;
+        hintBtn.textContent = '❓ Hint 1: Room Clue';
+        ruleSummary.innerHTML = `<span class="rule-pill ${rules.pillClass}">${rules.tierName}</span><span>Object hidden (???) • Randomized room & hiding spots • Any order works!</span>`;
+        trayTitleText.textContent = 'Hidden Parts Checklist (Find them in the room!)';
+        trayHelperText.textContent = 'Spot the parts hidden around this room and drag them onto the center mat in any order!';
+      }
+    }
+
+    function showFact(text, mode = false) {
+      if (mode === true || mode === 'warning') {
+        factDisplay.className = 'fact-banner warning';
+      } else if (mode === 'riddle') {
+        factDisplay.className = 'fact-banner riddle';
+      } else if (mode === 'super-hint') {
+        factDisplay.className = 'fact-banner super-hint';
+      } else {
+        factDisplay.className = 'fact-banner';
+      }
+      factDisplay.innerHTML = `<span>${text}</span>`;
+    }
+
+    function triggerConclusiveHint(rules) {
+      const unplaced = partsState.filter(p => !p.placed);
+      if (unplaced.length === 0) return;
+
+      unplaced.sort((a, b) => a.orderRank - b.orderRank);
+      const targetPiece = unplaced[0];
+
+      if (rules.randomRotation && targetPiece.rotation !== 0) {
+        targetPiece.rotation = 0;
+      }
+
+      partsState.forEach(p => {
+        p.highlightHint = (p.id === targetPiece.id);
+        p.showAngleHint = false;
+      });
+
+      beaconLayer.innerHTML = `
+        <g class="target-beacon" transform="translate(${targetPiece.targetX}, ${targetPiece.targetY})">
+          <circle cx="0" cy="0" r="34" fill="rgba(245, 158, 11, 0.22)" stroke="#f59e0b" stroke-width="3" stroke-dasharray="6 4"/>
+          <circle cx="0" cy="0" r="10" fill="#f59e0b"/>
+        </g>
+      `;
+
+      if (!rules.showSilhouette) {
+        clearTimeout(silhouetteTimer);
+        silhouetteEl.classList.remove('silhouette-hidden');
+        silhouetteEl.classList.add('silhouette-visible');
+        silhouetteTimer = setTimeout(() => {
+          silhouetteEl.classList.remove('silhouette-visible');
+          silhouetteEl.classList.add('silhouette-hidden');
+        }, 4500);
+      }
+
+      if (rules.roomScavenger) renderRoomScatter();
+      renderTray(rules);
+
+      const spotText = targetPiece.spotClue ? ` → Drop on the golden target (${targetPiece.spotClue})!` : ' → Drop right onto the glowing golden target!';
+      showFact(`🎯 Conclusive Hint (5 tries): "${targetPiece.name}" is now aligned & highlighted${spotText}`, 'super-hint');
+    }
+
+    function updateProgress() {
+      const placedCount = partsState.filter(p => p.placed).length;
+      const total = partsState.length;
+      progressText.textContent = `${placedCount} / ${total} Parts Assembled`;
+      progressFill.style.width = `${(placedCount / total) * 100}%`;
+
+      if (placedCount === total) {
+        beaconLayer.innerHTML = '';
+        playSound('win');
+        const level = LEVELS[currentLevelIndex];
+        const rules = getLevelRules(level.levelNumber);
+
+        if (rules.mysteryObject) {
+          const titleEl = document.getElementById('object-title');
+          titleEl.textContent = `✓ ${level.name}`;
+          titleEl.classList.remove('mystery-title');
+        }
+
+        document.getElementById('modal-badge').textContent = `Level ${level.levelNumber} Complete!`;
+        document.getElementById('modal-title').textContent = `${level.name} Assembled`;
+        document.getElementById('modal-intro').textContent = level.intro;
+        document.getElementById('modal-bullets').innerHTML = level.summaryBullets.map(b => `<li>${b}</li>`).join('');
+
+        const nextBtn = document.getElementById('modal-next-level-btn');
+        if (currentLevelIndex < LEVELS.length - 1) {
+          const nextLvl = LEVELS[currentLevelIndex + 1];
+          const nextRules = getLevelRules(nextLvl.levelNumber);
+          const nextLabel = nextRules.mysteryObject ? 'Mystery Object ???' : nextLvl.name;
+          nextBtn.textContent = `Start Level ${nextLvl.levelNumber}: ${nextLabel} →`;
+        } else {
+          nextBtn.textContent = `Back to Level 1 ↺`;
+        }
+
+        setTimeout(() => {
+          completeModal.classList.add('open');
+        }, 420);
+      }
+    }
+
+    function renderRoomScatter() {
+      roomScatterLayer.innerHTML = '';
+      partsState.forEach(part => {
+        if (part.placed) return;
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'room-hidden-part' + (part.highlightHint ? ' hint-pulse' : ''));
+        g.dataset.id = part.id;
+
+        g.innerHTML = `
+          <g transform="translate(${part.roomX}, ${part.roomY}) scale(0.72) translate(${-part.targetX}, ${-part.targetY})">
+            ${part.boardSvg}
+          </g>
+        `;
+        g.addEventListener('pointerdown', (e) => startDrag(e, part));
+        roomScatterLayer.appendChild(g);
+      });
+    }
+
+    function renderTray(rules = getLevelRules(LEVELS[currentLevelIndex].levelNumber)) {
+      trayEl.innerHTML = '';
+      partsState.forEach(part => {
+        const slot = document.createElement('div');
+
+        if (rules.roomScavenger) {
+          slot.className = 'part-slot room-checklist-slot' + (part.placed ? ' placed' : '') + (part.highlightHint ? ' hint-highlight' : '');
+          const label = document.createElement('div');
+          label.className = 'part-label';
+          label.textContent = part.placed ? `✓ ${part.name}` : `🔍 ${part.name}`;
+          slot.appendChild(label);
+          trayEl.appendChild(slot);
+          return;
+        }
+
+        slot.className = 'part-slot' + (part.placed ? ' placed' : '') + (part.highlightHint ? ' hint-highlight' : '');
+        slot.dataset.id = part.id;
+
+        if (!part.placed && part.showAngleHint) {
+          const turnsNeeded = ((360 - part.rotation) % 360) / 90;
+          const tag = document.createElement('div');
+          tag.className = 'angle-hint-tag';
+          tag.textContent = turnsNeeded === 0 ? 'Aligned ✓' : `Rotate ${turnsNeeded * 90}°`;
+          slot.appendChild(tag);
+        }
+
+        if (!part.placed && rules.randomRotation) {
+          const rotBtn = document.createElement('button');
+          rotBtn.className = 'rotate-badge';
+          rotBtn.title = 'Rotate 90°';
+          rotBtn.textContent = '↻';
+          rotBtn.addEventListener('pointerdown', (e) => {
+            e.stopPropagation();
+            rotatePart(part.id);
+          });
+          slot.appendChild(rotBtn);
+        }
+
+        const preview = document.createElement('div');
+        preview.className = 'part-preview';
+        preview.style.transform = `rotate(${part.rotation}deg)`;
+        preview.innerHTML = `
+          <svg viewBox="${part.previewBox}" width="84" height="50" style="overflow:visible;">
+            <defs>
+              <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.72" />
+                <stop offset="100%" stop-color="#7dd3fc" stop-opacity="0.78" />
+              </linearGradient>
+              <linearGradient id="steelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#e2e8f0" />
+                <stop offset="50%" stop-color="#94a3b8" />
+                <stop offset="100%" stop-color="#475569" />
+              </linearGradient>
+              <linearGradient id="woodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#d97706" />
+                <stop offset="100%" stop-color="#78350f" />
+              </linearGradient>
+              <linearGradient id="yellowBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#fde047" />
+                <stop offset="100%" stop-color="#ca8a04" />
+              </linearGradient>
+              <linearGradient id="flashlightBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#3b82f6" />
+                <stop offset="100%" stop-color="#1e3a8a" />
+              </linearGradient>
+              <linearGradient id="beamBulbGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#fef08a" />
+                <stop offset="100%" stop-color="#f59e0b" />
+              </linearGradient>
+              <linearGradient id="guitarBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ea580c" />
+                <stop offset="100%" stop-color="#7c2d12" />
+              </linearGradient>
+              <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fde68a" />
+                <stop offset="100%" stop-color="#a16207" />
+              </linearGradient>
+              <linearGradient id="redPaintGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#f87171" />
+                <stop offset="100%" stop-color="#991b1b" />
+              </linearGradient>
+            </defs>
+            ${part.previewSvg}
+          </svg>
+        `;
+        slot.appendChild(preview);
+
+        const label = document.createElement('div');
+        label.className = 'part-label';
+        label.textContent = part.placed ? `✓ ${part.name}` : part.name;
+        slot.appendChild(label);
+
+        if (!part.placed) {
+          slot.addEventListener('pointerdown', (e) => startDrag(e, part));
+        }
+
+        trayEl.appendChild(slot);
+      });
+    }
+
+    function rotatePart(partId) {
+      const part = partsState.find(p => p.id === partId);
+      if (!part || part.placed) return;
+      part.rotation = (part.rotation + 90) % 360;
+      playSound('rotate');
+      renderTray();
+    }
+
+    let pointerDownPos = { x: 0, y: 0 };
+    let hasMoved = false;
+
+    function startDrag(e, part) {
+      if (part.placed) return;
+      e.preventDefault();
+      e.stopPropagation();
+      draggingPart = part;
+      pointerDownPos = { x: e.clientX, y: e.clientY };
+      hasMoved = false;
+
+      const boardRect = svgEl.getBoundingClientRect();
+      ghostEl.innerHTML = `
+        <svg viewBox="0 0 800 380" width="${boardRect.width}" height="${boardRect.height}" style="overflow:visible;">
+          <g transform="translate(400, 190) rotate(${part.rotation}) translate(${-part.targetX}, ${-part.targetY})">
+            ${part.boardSvg}
+          </g>
+        </svg>
+      `;
+      updateGhostPosition(e.clientX, e.clientY);
+    }
+
+    function updateGhostPosition(clientX, clientY) {
+      if (!draggingPart) return;
+      const dist = Math.hypot(clientX - pointerDownPos.x, clientY - pointerDownPos.y);
+      if (dist > 6 && !hasMoved) {
+        hasMoved = true;
+        ghostEl.style.display = 'block';
+        playSound('pickup');
+      }
+      if (hasMoved) {
+        const offsetY = (window.matchMedia('(pointer: coarse)').matches) ? -45 : 0;
+        ghostEl.style.left = `${clientX}px`;
+        ghostEl.style.top = `${clientY + offsetY}px`;
+      }
+    }
+
+    window.addEventListener('pointermove', (e) => {
+      if (!draggingPart) return;
+      updateGhostPosition(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('pointerup', (e) => {
+      if (!draggingPart) return;
+      const part = draggingPart;
+      draggingPart = null;
+      ghostEl.style.display = 'none';
+
+      const rules = getLevelRules(LEVELS[currentLevelIndex].levelNumber);
+
+      if (!hasMoved) {
+        if (rules.randomRotation) {
+          rotatePart(part.id);
+        }
+        return;
+      }
+
+      const pt = svgEl.createSVGPoint();
+      const offsetY = (window.matchMedia('(pointer: coarse)').matches) ? -45 : 0;
+      pt.x = e.clientX;
+      pt.y = e.clientY + offsetY;
+      const svgCoords = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+
+      const distance = Math.hypot(svgCoords.x - part.targetX, svgCoords.y - part.targetY);
+
+      if (distance <= part.snapRadius) {
+        attemptSnap(part, rules);
+      } else {
+        registerFailedAttempt(rules, `Not quite! Try positioning the ${part.name} closer to where it connects.`);
+      }
+    });
+
+    function registerFailedAttempt(rules, defaultMessage) {
+      failedAttempts++;
+      playSound('error');
+      if (failedAttempts >= 5) {
+        triggerConclusiveHint(rules);
+      } else {
+        showFact(`${defaultMessage} (${failedAttempts}/5 tries)`, 'warning');
+      }
+    }
+
+    function attemptSnap(part, rules) {
+      if (rules.randomRotation && part.rotation !== 0) {
+        registerFailedAttempt(rules, `↻ Almost! Rotate the ${part.name} so it faces upright before snapping it in.`);
+        return;
+      }
+
+      if (rules.strictOrder && part.dependencies.length > 0) {
+        const missingDeps = part.dependencies.filter(depId => {
+          const depPart = partsState.find(p => p.id === depId);
+          return depPart && !depPart.placed;
+        });
+        if (missingDeps.length > 0) {
+          registerFailedAttempt(rules, `⚠️ Order Matters: ${part.dependencyMsg}`);
+          return;
+        }
+      }
+
+      failedAttempts = 0;
+      beaconLayer.innerHTML = '';
+
+      part.placed = true;
+      part.highlightHint = false;
+      part.showAngleHint = false;
+
+      if (activeHintPartId === part.id) {
+        riddleHintStage = 0;
+        activeHintPartId = null;
+        if (rules.hintMode === 'riddle_2step') {
+          hintBtn.textContent = rules.roomScavenger ? '❓ Hint 1: Room Clue' : '❓ Hint 1: Subpart Question';
+        }
+      }
+
+      playSound('snap');
+
+      const layer = document.getElementById(part.zLayer);
+      const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      wrapper.setAttribute('class', 'snapped-part snap-pulse');
+      wrapper.innerHTML = part.boardSvg;
+      layer.appendChild(wrapper);
+
+      showFact(`💡 ${part.name}: ${part.fact}`, false);
+      if (rules.roomScavenger) renderRoomScatter();
+      renderTray(rules);
+      updateProgress();
+    }
+
+    hintBtn.addEventListener('click', () => {
+      const rules = getLevelRules(LEVELS[currentLevelIndex].levelNumber);
+
+      if (rules.hintMode === 'peek') {
+        clearTimeout(silhouetteTimer);
+        silhouetteEl.classList.remove('silhouette-hidden');
+        silhouetteEl.classList.add('silhouette-visible');
+        showFact('👁 Blueprint Peek active for 3 seconds!', false);
+        silhouetteTimer = setTimeout(() => {
+          silhouetteEl.classList.remove('silhouette-visible');
+          silhouetteEl.classList.add('silhouette-hidden');
+        }, 3000);
+      } else if (rules.hintMode === 'angle') {
+        partsState.forEach(p => {
+          if (!p.placed) p.showAngleHint = true;
+        });
+        renderTray(rules);
+        showFact('🧭 Rotation angles revealed on each component in the tray!', false);
+      } else if (rules.hintMode === 'next') {
+        const unplaced = partsState.filter(p => !p.placed);
+        if (unplaced.length === 0) return;
+        unplaced.sort((a, b) => a.orderRank - b.orderRank);
+        const nextPiece = unplaced[0];
+        partsState.forEach(p => p.highlightHint = (p.id === nextPiece.id));
+        renderTray(rules);
+        showFact(`✨ Next Piece Hint: Grab the "${nextPiece.name}" highlighted in gold!`, false);
+      } else if (rules.hintMode === 'riddle_2step') {
+        const unplaced = partsState.filter(p => !p.placed);
+        if (unplaced.length === 0) return;
+        unplaced.sort((a, b) => a.orderRank - b.orderRank);
+
+        let targetPiece = partsState.find(p => p.id === activeHintPartId && !p.placed);
+        if (!targetPiece) {
+          targetPiece = unplaced[0];
+          activeHintPartId = targetPiece.id;
+          riddleHintStage = 0;
+        }
+
+        if (riddleHintStage === 0) {
+          riddleHintStage = 1;
+          showFact(`❓ ${targetPiece.riddle || ('Which part is the ' + targetPiece.name + '?')}`, 'riddle');
+          hintBtn.textContent = '✨ Hint 2: Show Subpart';
+        } else {
+          riddleHintStage = 2;
+          partsState.forEach(p => p.highlightHint = (p.id === targetPiece.id));
+          if (rules.roomScavenger) renderRoomScatter();
+          renderTray(rules);
+          showFact(`✨ Subpart Revealed: Look for the glowing "${targetPiece.name}"!`, 'riddle');
+          hintBtn.textContent = rules.roomScavenger ? '❓ Hint 1: Room Clue' : '❓ Hint 1: Subpart Question';
+        }
+      }
+    });
+
+    levelSelect.addEventListener('change', (e) => loadLevel(Number(e.target.value)));
+    prevLevelBtn.addEventListener('click', () => loadLevel(currentLevelIndex - 1));
+    nextLevelBtn.addEventListener('click', () => loadLevel(currentLevelIndex + 1));
+    document.getElementById('reset-btn').addEventListener('click', () => loadLevel(currentLevelIndex));
+    document.getElementById('modal-replay-btn').addEventListener('click', () => loadLevel(currentLevelIndex));
+    document.getElementById('modal-next-level-btn').addEventListener('click', () => {
+      const nextIdx = (currentLevelIndex + 1) % LEVELS.length;
+      loadLevel(nextIdx);
+    });
+
+    loadLevel(0);
+  </script>
+</body>
+</html>
