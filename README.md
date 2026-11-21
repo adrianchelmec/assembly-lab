@@ -1,11 +1,7 @@
-# Assembly Lab — Randomized Child's Room Build
+# Assembly Lab — Mobile Phone Browser Adaptation
 
-## What Was Updated
-- **Procedural Child's Room Generator (Levels 30–40):**
-  - Every time a room level loads or resets, the game generates a fresh bedroom environment so you never see the exact same room twice:
-    1. **6 Distinct Color Palettes:** *Sunny Lemon*, *Mint Breeze*, *Sky Blue Studio*, *Lavender Loft*, *Peach Sunset*, and *Starlight Twilight* (with randomized wall, trim, floor, rug, furniture wood, and book/decor colors).
-    2. **3 Distinct Room Furniture Layouts:**
-       - *Layout A:* Window & Study Desk on the left, tall Bookcase on the right, bunting banner overhead, and an oval rug in the center.
-       - *Layout B:* Tall Bookcase on the left, wide Window & Wooden Toy Chest on the right, framed poster on the wall, and a rectangular rug in the center.
-       - *Layout C:* Floating wall shelves & cozy daybed on the left, circular porthole window & workbench desk on the right, and a double-ring rug in the center.
-    3. **Randomized Hiding Spots & Dynamic Hint Clues:** Each subpart is shuffled onto different furniture surfaces with subtle positional jitter, and **Hint 1** dynamically updates to describe the exact piece of furniture in that generated room!
+## Mobile Adaptation Improvements
+- **Viewport & Safe-Area Support (`100dvh`, `viewport-fit=cover`):** Adapts cleanly to mobile browser address bars and notched screens without clipping or accidental page bounce.
+- **Responsive Header, Info Strip & HUD:** Stacks level navigation cleanly on narrow screens, condenses button labels on small viewports, and keeps level/progress cards compact so the assembly workbench stays tall and clear.
+- **Horizontal Scrollable Component Tray:** Turns the bottom tray into a smooth touch-scrollable strip on phones (`≤ 768px`) with larger tap targets for the `↻` rotation button.
+- **Touch Drag Precision:** Adds a slight vertical lift offset (`-52px`) and slightly expanded touch snap radius (`+14px`) on coarse-pointer/touch screens so your finger doesn't cover the drop zone while dragging parts or room objects.

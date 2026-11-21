@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Assembly Lab — Junior Engineering Puzzle Game</title>
   <style>
     :root {
@@ -18,12 +18,15 @@
       --text-main: #1e293b;
       --text-muted: #64748b;
       --border: #cbd5e1;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     * {
       box-sizing: border-box;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -32,33 +35,37 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
-      height: 100vh;
+      min-height: 100vh;
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      overscroll-behavior: none;
     }
 
     header {
       background: var(--panel-bg);
       border-bottom: 1px solid var(--border);
-      padding: 10px 24px;
+      padding: calc(8px + var(--safe-top)) 20px 8px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 12px;
       z-index: 20;
       box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      flex-wrap: wrap;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      min-width: 0;
     }
 
     .brand-icon {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       background: linear-gradient(135deg, #2563eb, #3b82f6);
       border-radius: 10px;
       display: flex;
@@ -66,42 +73,48 @@
       justify-content: center;
       color: white;
       font-weight: 800;
-      font-size: 20px;
+      font-size: 19px;
       box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3);
+      flex-shrink: 0;
     }
 
     .brand h1 {
       margin: 0;
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 800;
       letter-spacing: -0.5px;
       color: var(--text-main);
+      line-height: 1.1;
     }
 
     .brand span {
       display: block;
-      font-size: 11px;
+      font-size: 10.5px;
       color: var(--text-muted);
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .level-nav {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       background: #f8fafc;
-      padding: 6px 12px;
+      padding: 5px 10px;
       border-radius: 12px;
       border: 1px solid var(--border);
+      min-width: 0;
     }
 
     .nav-arrow {
       border: 1px solid var(--border);
       background: white;
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       border-radius: 8px;
       font-weight: 800;
       color: var(--text-main);
@@ -110,6 +123,7 @@
       align-items: center;
       justify-content: center;
       transition: all 0.15s ease;
+      flex-shrink: 0;
     }
 
     .nav-arrow:hover:not(:disabled) {
@@ -126,32 +140,35 @@
     .level-select {
       border: none;
       background: transparent;
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 700;
       color: var(--text-main);
-      padding: 4px 8px;
+      padding: 4px 6px;
       cursor: pointer;
       outline: none;
-      max-width: 310px;
+      max-width: 280px;
+      text-overflow: ellipsis;
     }
 
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .btn {
       border: none;
       border-radius: 10px;
-      padding: 8px 16px;
-      font-size: 14px;
+      padding: 8px 14px;
+      font-size: 13.5px;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
       transition: all 0.15s ease;
+      white-space: nowrap;
     }
 
     .btn-hint {
@@ -183,12 +200,12 @@
     .info-strip {
       background: #eff6ff;
       border-bottom: 1px solid #bfdbfe;
-      padding: 8px 24px;
+      padding: 7px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      font-size: 13.5px;
+      gap: 10px;
+      font-size: 13px;
       z-index: 15;
     }
 
@@ -198,15 +215,22 @@
       gap: 8px;
       font-weight: 600;
       color: #1e40af;
-      flex-shrink: 0;
+      min-width: 0;
+    }
+
+    .rule-text-detail {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .rule-pill {
       background: #dbeafe;
       padding: 2px 8px;
       border-radius: 999px;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
+      flex-shrink: 0;
     }
 
     .rule-pill.mystery {
@@ -226,11 +250,21 @@
       color: #065f46;
       background: #d1fae5;
       border: 1px solid #6ee7b7;
-      padding: 4px 14px;
+      padding: 4px 12px;
       border-radius: 999px;
       font-weight: 600;
-      font-size: 13px;
+      font-size: 12.5px;
+      line-height: 1.3;
       animation: popIn 0.25s ease-out;
+      max-width: 62%;
+    }
+
+    .fact-banner span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
 
     .fact-banner.warning {
@@ -253,7 +287,7 @@
     }
 
     @keyframes popIn {
-      0% { transform: scale(0.92); opacity: 0; }
+      0% { transform: scale(0.95); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
 
@@ -265,8 +299,9 @@
       background-image:
         linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
         linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
-      background-size: 32px 32px;
+      background-size: 28px 28px;
       overflow: hidden;
+      min-height: 0;
     }
 
     main.room-mode {
@@ -276,12 +311,13 @@
 
     .workbench-header {
       position: absolute;
-      top: 14px;
-      left: 24px;
-      right: 24px;
+      top: 10px;
+      left: 16px;
+      right: 16px;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+      gap: 10px;
       pointer-events: none;
       z-index: 5;
     }
@@ -291,28 +327,33 @@
       backdrop-filter: blur(6px);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 10px 16px;
+      padding: 8px 14px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      max-width: 65%;
     }
 
     .target-card .label {
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
       text-transform: uppercase;
       color: var(--text-muted);
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .target-card .title {
-      font-size: 18px;
+      font-size: 16.5px;
       font-weight: 800;
       color: var(--text-main);
       margin-top: 2px;
+      line-height: 1.15;
     }
 
     .target-card .title.mystery-title {
       color: var(--purple);
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
     }
 
     .progress-card {
@@ -320,24 +361,27 @@
       backdrop-filter: blur(6px);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 10px 16px;
+      padding: 8px 14px;
       text-align: right;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      flex-shrink: 0;
     }
 
     .progress-text {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 6px;
+      margin-bottom: 5px;
+      white-space: nowrap;
     }
 
     .progress-bar-bg {
-      width: 140px;
-      height: 8px;
+      width: 120px;
+      height: 7px;
       background: #e2e8f0;
       border-radius: 999px;
       overflow: hidden;
+      margin-left: auto;
     }
 
     .progress-bar-fill {
@@ -353,7 +397,9 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      padding: 12px;
+      padding: 44px 10px 8px;
+      min-height: 0;
+      width: 100%;
     }
 
     svg#assembly-svg {
@@ -410,6 +456,7 @@
 
     .room-hidden-part {
       cursor: grab;
+      touch-action: none;
       transition: filter 0.2s ease, transform 0.2s ease;
     }
 
@@ -430,37 +477,44 @@
     .tray-wrapper {
       background: var(--panel-bg);
       border-top: 2px solid var(--border);
-      padding: 10px 20px 14px;
+      padding: 8px 16px calc(10px + var(--safe-bottom));
       z-index: 20;
       box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.06);
+      flex-shrink: 0;
     }
 
     .tray-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      gap: 10px;
+      margin-bottom: 7px;
     }
 
     .tray-title {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--text-muted);
+      flex-shrink: 0;
     }
 
     .tray-helper {
-      font-size: 12.5px;
+      font-size: 12px;
       color: var(--primary);
       font-weight: 600;
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .parts-tray {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       max-width: 1240px;
       margin: 0 auto;
     }
@@ -469,13 +523,13 @@
       background: #f8fafc;
       border: 2px solid #e2e8f0;
       border-radius: 12px;
-      padding: 8px 6px;
+      padding: 6px 5px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      width: 122px;
-      height: 102px;
+      width: 112px;
+      height: 94px;
       position: relative;
       cursor: grab;
       transition: all 0.18s ease;
@@ -493,8 +547,10 @@
       cursor: default;
       background: #fffbeb;
       border-color: #fde68a;
-      height: 56px;
-      width: 150px;
+      height: 44px;
+      width: auto;
+      min-width: 124px;
+      padding: 6px 10px;
       justify-content: center;
     }
 
@@ -519,20 +575,22 @@
     }
 
     .part-preview {
-      width: 84px;
-      height: 52px;
+      width: 78px;
+      height: 46px;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
     }
 
     .part-label {
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--text-main);
       text-align: center;
       line-height: 1.15;
+      pointer-events: none;
     }
 
     .part-slot.placed .part-label {
@@ -541,40 +599,43 @@
 
     .rotate-badge {
       position: absolute;
-      top: 5px;
-      right: 5px;
+      top: 4px;
+      right: 4px;
       background: white;
       border: 1px solid var(--border);
-      border-radius: 6px;
-      width: 22px;
-      height: 22px;
+      border-radius: 7px;
+      width: 24px;
+      height: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 13px;
       color: var(--primary);
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
       z-index: 3;
+      touch-action: manipulation;
     }
 
-    .rotate-badge:hover {
+    .rotate-badge:hover,
+    .rotate-badge:active {
       background: var(--primary);
       color: white;
     }
 
     .angle-hint-tag {
       position: absolute;
-      top: 5px;
-      left: 5px;
+      top: 4px;
+      left: 4px;
       background: #fef3c7;
       border: 1px solid #f59e0b;
       color: #b45309;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 800;
       padding: 2px 5px;
       border-radius: 6px;
       z-index: 3;
+      pointer-events: none;
     }
 
     #drag-ghost {
@@ -595,7 +656,8 @@
       align-items: center;
       justify-content: center;
       z-index: 100;
-      padding: 20px;
+      padding: 16px;
+      overflow-y: auto;
     }
 
     .modal-backdrop.open {
@@ -613,52 +675,54 @@
       border-radius: 20px;
       max-width: 560px;
       width: 100%;
-      padding: 28px;
+      padding: 24px;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
       border: 2px solid #bfdbfe;
       text-align: center;
       animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-height: 90dvh;
+      overflow-y: auto;
     }
 
     .modal-badge {
       display: inline-block;
       background: #dbeafe;
       color: #1d4ed8;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.8px;
       padding: 4px 12px;
       border-radius: 999px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .blueprint-modal h2 {
       margin: 0 0 8px;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 800;
       color: var(--text-main);
     }
 
     .blueprint-modal p {
       color: var(--text-muted);
-      font-size: 15px;
-      line-height: 1.55;
-      margin: 0 0 20px;
+      font-size: 14.5px;
+      line-height: 1.5;
+      margin: 0 0 16px;
     }
 
     .blueprint-summary-box {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 14px;
-      padding: 14px 18px;
+      padding: 12px 16px;
       text-align: left;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
     }
 
     .blueprint-summary-box h4 {
-      margin: 0 0 8px;
-      font-size: 13px;
+      margin: 0 0 6px;
+      font-size: 12px;
       text-transform: uppercase;
       color: var(--primary);
       letter-spacing: 0.5px;
@@ -667,26 +731,252 @@
     .blueprint-summary-box ul {
       margin: 0;
       padding-left: 18px;
-      font-size: 13.5px;
+      font-size: 13px;
       color: var(--text-main);
-      line-height: 1.6;
+      line-height: 1.55;
     }
 
     .modal-actions {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     .btn-primary {
       background: var(--primary);
       color: white;
-      padding: 11px 22px;
-      font-size: 15px;
+      padding: 11px 20px;
+      font-size: 14.5px;
     }
 
     .btn-primary:hover {
       background: var(--primary-hover);
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: calc(6px + var(--safe-top)) 10px 6px;
+        gap: 6px;
+      }
+
+      .brand {
+        order: 1;
+        flex: 1 1 auto;
+      }
+
+      .brand-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+        border-radius: 8px;
+      }
+
+      .brand h1 {
+        font-size: 16px;
+      }
+
+      .brand span {
+        font-size: 9px;
+      }
+
+      .header-actions {
+        order: 2;
+        gap: 6px;
+      }
+
+      .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 8px;
+        min-height: 32px;
+      }
+
+      .level-nav {
+        order: 3;
+        width: 100%;
+        justify-content: space-between;
+        padding: 4px 8px;
+        border-radius: 10px;
+      }
+
+      .nav-arrow {
+        width: 34px;
+        height: 30px;
+      }
+
+      .level-select {
+        max-width: 100%;
+        flex: 1;
+        font-size: 12.5px;
+        text-align: center;
+      }
+
+      .info-strip {
+        padding: 5px 10px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+      }
+
+      .rule-badge {
+        justify-content: center;
+        font-size: 11px;
+        gap: 6px;
+      }
+
+      .fact-banner {
+        max-width: 100%;
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        padding: 4px 10px;
+        font-size: 11.5px;
+        border-radius: 10px;
+      }
+
+      .workbench-header {
+        top: 6px;
+        left: 10px;
+        right: 10px;
+        gap: 6px;
+      }
+
+      .target-card {
+        padding: 6px 10px;
+        border-radius: 10px;
+        max-width: 60%;
+      }
+
+      .target-card .label {
+        font-size: 9px;
+      }
+
+      .target-card .title {
+        font-size: 13.5px;
+      }
+
+      .progress-card {
+        padding: 6px 10px;
+        border-radius: 10px;
+      }
+
+      .progress-text {
+        font-size: 10.5px;
+        margin-bottom: 4px;
+      }
+
+      .progress-bar-bg {
+        width: 84px;
+        height: 6px;
+      }
+
+      .board-container {
+        padding: 46px 6px 6px;
+      }
+
+      svg#assembly-svg {
+        max-height: none;
+        height: 100%;
+      }
+
+      .tray-wrapper {
+        padding: 6px 8px calc(8px + var(--safe-bottom));
+      }
+
+      .tray-header {
+        margin-bottom: 5px;
+      }
+
+      .tray-title {
+        font-size: 10.5px;
+      }
+
+      .tray-helper {
+        font-size: 10.5px;
+      }
+
+      .parts-tray {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+        gap: 7px;
+      }
+
+      .parts-tray::-webkit-scrollbar {
+        display: none;
+      }
+
+      .part-slot {
+        flex: 0 0 auto;
+        width: 92px;
+        height: 82px;
+        padding: 5px 4px;
+        border-radius: 10px;
+      }
+
+      .part-slot.room-checklist-slot {
+        height: 38px;
+        min-width: 106px;
+        padding: 4px 8px;
+      }
+
+      .part-preview {
+        width: 66px;
+        height: 38px;
+      }
+
+      .part-preview svg {
+        width: 66px !important;
+        height: 38px !important;
+      }
+
+      .part-label {
+        font-size: 10px;
+      }
+
+      .rotate-badge {
+        width: 24px;
+        height: 24px;
+        font-size: 13px;
+        top: 3px;
+        right: 3px;
+      }
+
+      .angle-hint-tag {
+        font-size: 8.5px;
+        padding: 1px 4px;
+        top: 3px;
+        left: 3px;
+      }
+
+      .blueprint-modal {
+        padding: 18px;
+        border-radius: 16px;
+      }
+
+      .blueprint-modal h2 {
+        font-size: 20px;
+      }
+
+      .blueprint-modal p {
+        font-size: 13.5px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .rule-text-detail {
+        display: none;
+      }
+
+      .part-slot {
+        width: 84px;
+        height: 78px;
+      }
     }
   </style>
 </head>
@@ -735,7 +1025,7 @@
     </div>
 
     <div class="board-container">
-      <svg id="assembly-svg" viewBox="0 0 800 380">
+      <svg id="assembly-svg" viewBox="0 0 800 380" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.72" />
@@ -1852,6 +2142,14 @@
     const prevLevelBtn = document.getElementById('prev-level-btn');
     const nextLevelBtn = document.getElementById('next-level-btn');
 
+    function isTouchDevice() {
+      return window.matchMedia('(pointer: coarse)').matches || ('ontouchstart' in window);
+    }
+
+    function getTouchOffsetY() {
+      return isTouchDevice() ? -52 : 0;
+    }
+
     function refreshLevelDropdown() {
       const savedVal = levelSelect.value;
       levelSelect.innerHTML = '';
@@ -1931,9 +2229,9 @@
       updateProgress();
 
       if (rules.roomScavenger) {
-        showFact(`🔍 New Room Layout: Find the ${level.parts.length} parts hidden around the bedroom and assemble the mystery object in any order!`, false);
+        showFact(`🔍 New Room Layout: Find the ${level.parts.length} parts hidden around the bedroom and drag them onto the mat!`, false);
       } else if (rules.mysteryObject) {
-        showFact(`🕵️ Mystery Blueprint: Study the part names and shapes—assemble them in any order to reveal the object!`, false);
+        showFact(`🕵️ Mystery Blueprint: Study the part names and shapes—assemble them in any order!`, false);
       } else {
         showFact(`🔧 Level ${level.levelNumber}: Drag each component of the ${level.name} onto the workbench!`, false);
       }
@@ -1944,50 +2242,50 @@
         silhouetteEl.classList.remove('silhouette-hidden');
         silhouetteEl.classList.add('silhouette-visible');
         hintBtn.disabled = true;
-        hintBtn.textContent = '💡 No Hint (Lv 1–4)';
-        ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span>Silhouette visible • Any order • Pre-aligned • Auto-help after 5 tries</span>`;
+        hintBtn.textContent = '💡 No Hint';
+        ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span class="rule-text-detail">Silhouette visible • Any order • Pre-aligned</span>`;
         trayTitleText.textContent = 'Component Tray';
-        trayHelperText.textContent = 'Drag each component onto its matching outline on the blueprint.';
+        trayHelperText.textContent = 'Drag each part onto its matching outline.';
       } else if (rules.hintMode === 'peek') {
         silhouetteEl.classList.remove('silhouette-visible');
         silhouetteEl.classList.add('silhouette-hidden');
         hintBtn.disabled = false;
-        hintBtn.textContent = '👁 Peek Outline (3s)';
-        ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span>Blank board • Any order • Hint shows outline for 3s</span>`;
+        hintBtn.textContent = '👁 Peek (3s)';
+        ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span class="rule-text-detail">Blank board • Any order • 3s outline peek</span>`;
         trayTitleText.textContent = 'Component Tray';
-        trayHelperText.textContent = 'Place parts on the blank workbench. Need help? Click Peek Outline!';
+        trayHelperText.textContent = 'Place parts on the blank board or tap Peek (3s).';
       } else if (rules.hintMode === 'angle') {
         silhouetteEl.classList.remove('silhouette-visible');
         silhouetteEl.classList.add('silhouette-hidden');
         hintBtn.disabled = false;
-        hintBtn.textContent = '🧭 Show Rotation Angle';
-        ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span>Blank board • Random angles (Click ↻) • Hint shows angle</span>`;
+        hintBtn.textContent = '🧭 Angles';
+        ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span class="rule-text-detail">Random angles • Tap part or ↻ to rotate</span>`;
         trayTitleText.textContent = 'Component Tray';
-        trayHelperText.textContent = 'Click a part or its ↻ button to rotate it to 0° upright before dragging!';
+        trayHelperText.textContent = 'Tap a part or ↻ to rotate to 0° before dragging!';
       } else if (rules.hintMode === 'next') {
         silhouetteEl.classList.remove('silhouette-visible');
         silhouetteEl.classList.add('silhouette-hidden');
         hintBtn.disabled = false;
-        hintBtn.textContent = '✨ Highlight Next Piece';
-        ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span>Blank board • Random angles • Strict order • Hint highlights next piece</span>`;
+        hintBtn.textContent = '✨ Next Piece';
+        ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span class="rule-text-detail">Random angles • Strict build order</span>`;
         trayTitleText.textContent = 'Component Tray';
-        trayHelperText.textContent = 'Build from the foundation up! Rotate parts to 0° and attach base parts first.';
+        trayHelperText.textContent = 'Build from the base up & rotate to 0°!';
       } else if (rules.hintMode === 'riddle_2step' && !rules.roomScavenger) {
         silhouetteEl.classList.remove('silhouette-visible');
         silhouetteEl.classList.add('silhouette-hidden');
         hintBtn.disabled = false;
-        hintBtn.textContent = '❓ Hint 1: Subpart Question';
-        ruleSummary.innerHTML = `<span class="rule-pill ${rules.pillClass}">${rules.tierName}</span><span>Object hidden (???) • Any order works! • 2-Step Hint (Question → Reveal)</span>`;
-        trayTitleText.textContent = 'Mystery Components';
-        trayHelperText.textContent = 'Assemble in any order! Rotate parts upright (0°) and deduce the mystery object.';
+        hintBtn.textContent = '❓ Hint 1';
+        ruleSummary.innerHTML = `<span class="rule-pill ${rules.pillClass}">${rules.tierName}</span><span class="rule-text-detail">Mystery ??? • Any order • 2-step hint</span>`;
+        trayTitleText.textContent = 'Mystery Parts';
+        trayHelperText.textContent = 'Rotate parts upright (0°) & deduce the object.';
       } else if (rules.roomScavenger) {
         silhouetteEl.classList.remove('silhouette-visible');
         silhouetteEl.classList.add('silhouette-hidden');
         hintBtn.disabled = false;
-        hintBtn.textContent = '❓ Hint 1: Room Clue';
-        ruleSummary.innerHTML = `<span class="rule-pill ${rules.pillClass}">${rules.tierName}</span><span>Object hidden (???) • Randomized room & hiding spots • Any order works!</span>`;
-        trayTitleText.textContent = 'Hidden Parts Checklist (Find them in the room!)';
-        trayHelperText.textContent = 'Spot the parts hidden around this room and drag them onto the center mat in any order!';
+        hintBtn.textContent = '❓ Room Clue';
+        ruleSummary.innerHTML = `<span class="rule-pill ${rules.pillClass}">${rules.tierName}</span><span class="rule-text-detail">Hidden in room • Any order</span>`;
+        trayTitleText.textContent = 'Room Checklist';
+        trayHelperText.textContent = 'Find hidden parts in the room & drag to the mat!';
       }
     }
 
@@ -2040,14 +2338,14 @@
       if (rules.roomScavenger) renderRoomScatter();
       renderTray(rules);
 
-      const spotText = targetPiece.spotClue ? ` → Drop on the golden target (${targetPiece.spotClue})!` : ' → Drop right onto the glowing golden target!';
-      showFact(`🎯 Conclusive Hint (5 tries): "${targetPiece.name}" is now aligned & highlighted${spotText}`, 'super-hint');
+      const spotText = targetPiece.spotClue ? ` (${targetPiece.spotClue})` : '';
+      showFact(`🎯 Hint (5 tries): "${targetPiece.name}" highlighted${spotText} — drop on gold target!`, 'super-hint');
     }
 
     function updateProgress() {
       const placedCount = partsState.filter(p => p.placed).length;
       const total = partsState.length;
-      progressText.textContent = `${placedCount} / ${total} Parts Assembled`;
+      progressText.textContent = `${placedCount} / ${total} Assembled`;
       progressFill.style.width = `${(placedCount / total) * 100}%`;
 
       if (placedCount === total) {
@@ -2071,8 +2369,8 @@
         if (currentLevelIndex < LEVELS.length - 1) {
           const nextLvl = LEVELS[currentLevelIndex + 1];
           const nextRules = getLevelRules(nextLvl.levelNumber);
-          const nextLabel = nextRules.mysteryObject ? 'Mystery Object ???' : nextLvl.name;
-          nextBtn.textContent = `Start Level ${nextLvl.levelNumber}: ${nextLabel} →`;
+          const nextLabel = nextRules.mysteryObject ? 'Mystery ???' : nextLvl.name;
+          nextBtn.textContent = `Next: Lv ${nextLvl.levelNumber} ${nextLabel} →`;
         } else {
           nextBtn.textContent = `Back to Level 1 ↺`;
         }
@@ -2092,7 +2390,7 @@
         g.dataset.id = part.id;
 
         g.innerHTML = `
-          <g transform="translate(${part.roomX}, ${part.roomY}) scale(0.72) translate(${-part.targetX}, ${-part.targetY})">
+          <g transform="translate(${part.roomX}, ${part.roomY}) scale(0.76) translate(${-part.targetX}, ${-part.targetY})">
             ${part.boardSvg}
           </g>
         `;
@@ -2123,13 +2421,14 @@
           const turnsNeeded = ((360 - part.rotation) % 360) / 90;
           const tag = document.createElement('div');
           tag.className = 'angle-hint-tag';
-          tag.textContent = turnsNeeded === 0 ? 'Aligned ✓' : `Rotate ${turnsNeeded * 90}°`;
+          tag.textContent = turnsNeeded === 0 ? '0° ✓' : `${turnsNeeded * 90}°`;
           slot.appendChild(tag);
         }
 
         if (!part.placed && rules.randomRotation) {
           const rotBtn = document.createElement('button');
           rotBtn.className = 'rotate-badge';
+          rotBtn.type = 'button';
           rotBtn.title = 'Rotate 90°';
           rotBtn.textContent = '↻';
           rotBtn.addEventListener('pointerdown', (e) => {
@@ -2143,7 +2442,7 @@
         preview.className = 'part-preview';
         preview.style.transform = `rotate(${part.rotation}deg)`;
         preview.innerHTML = `
-          <svg viewBox="${part.previewBox}" width="84" height="50" style="overflow:visible;">
+          <svg viewBox="${part.previewBox}" width="80" height="46" style="overflow:visible;">
             <defs>
               <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.72" />
@@ -2214,6 +2513,7 @@
 
     function startDrag(e, part) {
       if (part.placed) return;
+      if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
       e.preventDefault();
       e.stopPropagation();
       draggingPart = part;
@@ -2233,14 +2533,15 @@
 
     function updateGhostPosition(clientX, clientY) {
       if (!draggingPart) return;
+      const moveThreshold = isTouchDevice() ? 5 : 6;
       const dist = Math.hypot(clientX - pointerDownPos.x, clientY - pointerDownPos.y);
-      if (dist > 6 && !hasMoved) {
+      if (dist > moveThreshold && !hasMoved) {
         hasMoved = true;
         ghostEl.style.display = 'block';
         playSound('pickup');
       }
       if (hasMoved) {
-        const offsetY = (window.matchMedia('(pointer: coarse)').matches) ? -45 : 0;
+        const offsetY = getTouchOffsetY();
         ghostEl.style.left = `${clientX}px`;
         ghostEl.style.top = `${clientY + offsetY}px`;
       }
@@ -2248,8 +2549,9 @@
 
     window.addEventListener('pointermove', (e) => {
       if (!draggingPart) return;
+      if (e.pointerType === 'touch') e.preventDefault();
       updateGhostPosition(e.clientX, e.clientY);
-    });
+    }, { passive: false });
 
     window.addEventListener('pointerup', (e) => {
       if (!draggingPart) return;
@@ -2266,15 +2568,19 @@
         return;
       }
 
+      const ctm = svgEl.getScreenCTM();
+      if (!ctm) return;
+
       const pt = svgEl.createSVGPoint();
-      const offsetY = (window.matchMedia('(pointer: coarse)').matches) ? -45 : 0;
+      const offsetY = getTouchOffsetY();
       pt.x = e.clientX;
       pt.y = e.clientY + offsetY;
-      const svgCoords = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+      const svgCoords = pt.matrixTransform(ctm.inverse());
 
       const distance = Math.hypot(svgCoords.x - part.targetX, svgCoords.y - part.targetY);
+      const effectiveSnapRadius = isTouchDevice() ? part.snapRadius + 14 : part.snapRadius;
 
-      if (distance <= part.snapRadius) {
+      if (distance <= effectiveSnapRadius) {
         attemptSnap(part, rules);
       } else {
         registerFailedAttempt(rules, `Not quite! Try positioning the ${part.name} closer to where it connects.`);
@@ -2319,7 +2625,7 @@
         riddleHintStage = 0;
         activeHintPartId = null;
         if (rules.hintMode === 'riddle_2step') {
-          hintBtn.textContent = rules.roomScavenger ? '❓ Hint 1: Room Clue' : '❓ Hint 1: Subpart Question';
+          hintBtn.textContent = rules.roomScavenger ? '❓ Room Clue' : '❓ Hint 1';
         }
       }
 
@@ -2378,14 +2684,14 @@
         if (riddleHintStage === 0) {
           riddleHintStage = 1;
           showFact(`❓ ${targetPiece.riddle || ('Which part is the ' + targetPiece.name + '?')}`, 'riddle');
-          hintBtn.textContent = '✨ Hint 2: Show Subpart';
+          hintBtn.textContent = '✨ Hint 2';
         } else {
           riddleHintStage = 2;
           partsState.forEach(p => p.highlightHint = (p.id === targetPiece.id));
           if (rules.roomScavenger) renderRoomScatter();
           renderTray(rules);
           showFact(`✨ Subpart Revealed: Look for the glowing "${targetPiece.name}"!`, 'riddle');
-          hintBtn.textContent = rules.roomScavenger ? '❓ Hint 1: Room Clue' : '❓ Hint 1: Subpart Question';
+          hintBtn.textContent = rules.roomScavenger ? '❓ Room Clue' : '❓ Hint 1';
         }
       }
     });
