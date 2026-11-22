@@ -286,6 +286,143 @@
       box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
     }
 
+
+    /* Joey Companion Styles & Animations */
+    .joey-companion-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 66%;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .joey-avatar-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      border: 2px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 2px 9px 2px 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      flex-shrink: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      outline: none;
+    }
+
+    .joey-avatar-btn:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+    }
+
+    .joey-avatar-btn:active {
+      transform: scale(0.95);
+    }
+
+    .joey-avatar-btn:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    .joey-avatar-svg-wrap {
+      width: 36px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+    }
+
+    .joey-nametag {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
+    .joey-speech-bubble {
+      flex: 1;
+      max-width: 100%;
+    }
+
+    @keyframes joeyBreath {
+      0%, 100% { transform: translate(55px, 68px); }
+      50% { transform: translate(55px, 66px); }
+    }
+
+    @keyframes joeyHop {
+      0% { transform: translate(55px, 68px) scale(1); }
+      35% { transform: translate(55px, 50px) scale(1.08, 0.94); }
+      65% { transform: translate(55px, 68px) scale(0.96, 1.04); }
+      100% { transform: translate(55px, 68px) scale(1); }
+    }
+
+    @keyframes joeyTilt {
+      0%, 100% { transform: translate(55px, 68px) rotate(0deg); }
+      40% { transform: translate(55px, 67px) rotate(-8deg); }
+      80% { transform: translate(55px, 67px) rotate(6deg); }
+    }
+
+    @keyframes joeySpin {
+      0% { transform: translate(55px, 68px) rotate(0deg) scale(1); }
+      50% { transform: translate(55px, 46px) rotate(180deg) scale(1.18); }
+      100% { transform: translate(55px, 68px) rotate(360deg) scale(1); }
+    }
+
+    @keyframes joeyCheerPulse {
+      0%, 100% { transform: translate(55px, 68px) scale(1); }
+      50% { transform: translate(55px, 62px) scale(1.06); }
+    }
+
+    .joey-root {
+      transform-origin: 0px 58px;
+      animation: joeyBreath 3.2s ease-in-out infinite;
+      transition: transform 0.25s ease;
+    }
+
+    .joey-mood-happy .joey-root {
+      animation: joeyHop 0.5s ease-in-out 2;
+    }
+
+    .joey-mood-puzzled .joey-root {
+      animation: joeyTilt 0.8s ease-in-out infinite;
+    }
+
+    .joey-mood-curious .joey-root {
+      transform: translate(55px, 66px) scale(1.03);
+    }
+
+    .joey-mood-spin .joey-root {
+      animation: joeySpin 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .joey-mood-celebrate .joey-root {
+      animation: joeyCheerPulse 0.5s ease-in-out infinite;
+    }
+
+    .modal-joey-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .modal-joey-box {
+      width: 90px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(254, 240, 138, 0.45) 0%, rgba(255, 255, 255, 0) 70%);
+      border-radius: 999px;
+    }
+
     @keyframes popIn {
       0% { transform: scale(0.95); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
@@ -491,13 +628,6 @@
       margin-bottom: 7px;
     }
 
-    .tray-header-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 0;
-    }
-
     .tray-title {
       font-size: 12px;
       font-weight: 800;
@@ -505,19 +635,6 @@
       letter-spacing: 0.5px;
       color: var(--text-muted);
       flex-shrink: 0;
-    }
-
-    .tray-count-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: #e2e8f0;
-      color: var(--text-muted);
-      font-size: 10.5px;
-      font-weight: 700;
-      padding: 1px 7px;
-      border-radius: 10px;
-      line-height: 1.3;
     }
 
     .tray-helper {
@@ -530,102 +647,13 @@
       white-space: nowrap;
     }
 
-    .tray-scroll-container {
-      position: relative;
-      width: 100%;
-      display: flex;
-      align-items: center;
-    }
-
-    .tray-scroll-container::before,
-    .tray-scroll-container::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 32px;
-      pointer-events: none;
-      z-index: 12;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-    }
-
-    .tray-scroll-container::before {
-      left: 0;
-      background: linear-gradient(to right, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0));
-    }
-
-    .tray-scroll-container::after {
-      right: 0;
-      background: linear-gradient(to left, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0));
-    }
-
-    .tray-scroll-container.can-scroll-left::before {
-      opacity: 1;
-    }
-
-    .tray-scroll-container.can-scroll-right::after {
-      opacity: 1;
-    }
-
-    .tray-scroll-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 28px;
-      height: 44px;
-      background: rgba(255, 255, 255, 0.96);
-      border: 1.5px solid var(--border);
-      color: var(--primary);
-      font-size: 20px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      cursor: pointer;
-      z-index: 15;
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
-      transition: opacity 0.2s ease, transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
-      user-select: none;
-      -webkit-user-select: none;
-      opacity: 0;
-      pointer-events: none;
-      padding: 0;
-      line-height: 1;
-    }
-
-    .tray-scroll-btn:hover {
-      background: #eff6ff;
-      border-color: var(--primary);
-    }
-
-    .tray-scroll-btn:active {
-      transform: translateY(-50%) scale(0.92);
-    }
-
-    .tray-scroll-btn.prev {
-      left: 2px;
-    }
-
-    .tray-scroll-btn.next {
-      right: 2px;
-    }
-
-    .tray-scroll-btn.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
     .parts-tray {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 8px;
       max-width: 1240px;
-      width: 100%;
       margin: 0 auto;
-      scroll-behavior: smooth;
     }
 
     .part-slot {
@@ -642,22 +670,7 @@
       position: relative;
       cursor: grab;
       transition: all 0.18s ease;
-      touch-action: pan-x;
-      user-select: none;
-      -webkit-user-select: none;
-      outline: none;
-    }
-
-    .part-slot:focus-visible {
-      outline: 2px solid var(--primary);
-      outline-offset: 2px;
-    }
-
-    .part-slot.selected {
-      border-color: var(--primary) !important;
-      background: #eff6ff !important;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35), 0 6px 14px rgba(37, 99, 235, 0.15) !important;
-      transform: translateY(-2px);
+      touch-action: none;
     }
 
     .part-slot:hover:not(.placed):not(.room-checklist-slot) {
@@ -949,6 +962,27 @@
         gap: 6px;
       }
 
+
+      .joey-companion-container {
+        max-width: 100%;
+        width: 100%;
+        justify-content: flex-start;
+        gap: 6px;
+      }
+
+      .joey-avatar-btn {
+        padding: 2px 7px 2px 3px;
+      }
+
+      .joey-avatar-svg-wrap {
+        width: 30px;
+        height: 35px;
+      }
+
+      .joey-nametag {
+        font-size: 10px;
+      }
+
       .fact-banner {
         max-width: 100%;
         width: 100%;
@@ -1020,31 +1054,15 @@
         font-size: 10.5px;
       }
 
-      .tray-scroll-container {
-        padding: 0 2px;
-      }
-
-      .tray-scroll-btn {
-        width: 26px;
-        height: 38px;
-        font-size: 18px;
-        opacity: 0;
-      }
-
       .parts-tray {
         flex-wrap: nowrap;
         justify-content: flex-start;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
-        scroll-behavior: smooth;
-        overscroll-behavior-x: contain;
-        scroll-snap-type: x proximity;
         scrollbar-width: none;
-        -ms-overflow-style: none;
-        padding: 4px 12px 6px;
-        gap: 8px;
-        touch-action: pan-x;
+        padding-bottom: 2px;
+        gap: 7px;
       }
 
       .parts-tray::-webkit-scrollbar {
@@ -1053,12 +1071,10 @@
 
       .part-slot {
         flex: 0 0 auto;
-        width: 94px;
-        height: 84px;
+        width: 92px;
+        height: 82px;
         padding: 5px 4px;
         border-radius: 10px;
-        scroll-snap-align: center;
-        touch-action: pan-x;
       }
 
       .part-slot.room-checklist-slot {
@@ -1147,8 +1163,14 @@
 
   <div class="info-strip">
     <div class="rule-badge" id="rule-summary"></div>
-    <div id="fact-display" class="fact-banner">
-      <span>🔧 Drag any part from the tray onto the workbench to start building!</span>
+    <div class="joey-companion-container" id="joey-companion-container">
+      <div class="joey-avatar-btn" id="joey-avatar-btn" role="button" tabindex="0" title="Joey — Workshop Apprentice (Click to talk!)" aria-label="Joey, your apprentice">
+        <div class="joey-avatar-svg-wrap" id="joey-avatar-svg-wrap"></div>
+        <div class="joey-nametag">Joey</div>
+      </div>
+      <div id="fact-display" class="fact-banner joey-speech-bubble">
+        <span>🔧 Drag any part from the tray onto the workbench to start building!</span>
+      </div>
     </div>
   </div>
 
@@ -1247,23 +1269,19 @@
 
   <section class="tray-wrapper">
     <div class="tray-header">
-      <div class="tray-header-left">
-        <span class="tray-title" id="tray-title-text">Component Tray</span>
-        <span class="tray-count-badge" id="tray-count-badge">0 / 3</span>
-      </div>
+      <span class="tray-title" id="tray-title-text">Component Tray</span>
       <span class="tray-helper" id="tray-helper-text">Drag each component to its matching position on the blueprint.</span>
     </div>
-    <div class="tray-scroll-container" id="tray-scroll-container">
-      <button class="tray-scroll-btn prev" id="tray-scroll-prev" type="button" aria-label="Scroll parts left" title="Scroll left" tabindex="-1">‹</button>
-      <div class="parts-tray" id="parts-tray" role="listbox" aria-label="Components tray"></div>
-      <button class="tray-scroll-btn next" id="tray-scroll-next" type="button" aria-label="Scroll parts right" title="Scroll right" tabindex="-1">›</button>
-    </div>
+    <div class="parts-tray" id="parts-tray"></div>
   </section>
 
   <div id="drag-ghost"></div>
 
   <div class="modal-backdrop" id="complete-modal">
     <div class="blueprint-modal">
+      <div class="modal-joey-wrap">
+        <div class="modal-joey-box" id="modal-joey-box"></div>
+      </div>
       <div class="modal-badge" id="modal-badge">Blueprint Unlocked!</div>
       <h2 id="modal-title">Object Assembled</h2>
       <p id="modal-intro">Great job, Junior Engineer!</p>
@@ -1307,7 +1325,6 @@
       okSoundIndex++;
 
       if (variation === 0) {
-        // 1. Juicy Cartoon Bubble Pop ("Bloop-POP!")
         const osc1 = ctx.createOscillator();
         const osc2 = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -1332,9 +1349,7 @@
         osc2.start(now);
         osc1.stop(now + 0.16);
         osc2.stop(now + 0.16);
-
       } else if (variation === 1) {
-        // 2. Comedic Spring Boing ("Boi-i-ing!")
         const osc = ctx.createOscillator();
         const lfo = ctx.createOscillator();
         const lfoGain = ctx.createGain();
@@ -1342,8 +1357,7 @@
 
         osc.type = 'sine';
         lfo.type = 'sine';
-        lfo.frequency.setValueAtTime(28, now); // cartoon vibrato flutter
-
+        lfo.frequency.setValueAtTime(28, now);
         lfoGain.gain.setValueAtTime(80, now);
         lfoGain.gain.exponentialRampToValueAtTime(10, now + 0.22);
 
@@ -1362,9 +1376,7 @@
         osc.start(now);
         lfo.stop(now + 0.25);
         osc.stop(now + 0.25);
-
       } else if (variation === 2) {
-        // 3. Slide Whistle Up ("Wheee-Ding!")
         const osc = ctx.createOscillator();
         const ding = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -1384,7 +1396,7 @@
         gain.gain.linearRampToValueAtTime(0.18, now + 0.08);
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
 
-        ding.frequency.setValueAtTime(1318.5, now + 0.09); // E6 bell
+        ding.frequency.setValueAtTime(1318.5, now + 0.09);
         dingGain.gain.setValueAtTime(0.001, now);
         dingGain.gain.setValueAtTime(0.2, now + 0.09);
         dingGain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
@@ -1393,9 +1405,7 @@
         ding.start(now + 0.09);
         osc.stop(now + 0.13);
         ding.stop(now + 0.28);
-
       } else {
-        // 4. Playful Double Marimba Pop ("Pip-Pop!")
         const notes = [659.25, 987.77];
         notes.forEach((freq, idx) => {
           const o = ctx.createOscillator();
@@ -1424,7 +1434,6 @@
       nokSoundIndex++;
 
       if (variation === 0) {
-        // 1. Classic Cartoon Sad Trombone ("Womp... WOMP...")
         const notes = [
           { f1: 233.08, f2: 215, dur: 0.15, pause: 0 },
           { f1: 174.61, f2: 130.81, dur: 0.28, pause: 0.16 }
@@ -1456,9 +1465,7 @@
           lfo.stop(startT + dur);
           osc.stop(startT + dur);
         });
-
       } else if (variation === 1) {
-        // 2. Funny Cartoon Spring Unwind ("Pwaaa-ooong!")
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
@@ -1475,9 +1482,7 @@
 
         osc.start(now);
         osc.stop(now + 0.26);
-
       } else if (variation === 2) {
-        // 3. Comedic Balloon Squeak / Raspberry ("Pfffft-blrt!")
         const osc1 = ctx.createOscillator();
         const osc2 = ctx.createOscillator();
         const gain = ctx.createGain();
@@ -1501,9 +1506,7 @@
         osc2.start(now);
         osc1.stop(now + 0.22);
         osc2.stop(now + 0.22);
-
       } else {
-        // 4. Goofy Clown Honk ("Honk-Honk!")
         [0, 0.1].forEach((delay) => {
           const startT = now + delay;
           const osc = ctx.createOscillator();
@@ -2503,53 +2506,9 @@
       }
     }
 
-    const STORAGE_KEY_COMPLETED = 'assembly_lab_completed';
-    const STORAGE_KEY_CURRENT = 'assembly_lab_current';
-
-    function getSavedCompletedLevels() {
-      try {
-        const data = localStorage.getItem(STORAGE_KEY_COMPLETED);
-        return data ? JSON.parse(data) : [];
-      } catch (e) {
-        return [];
-      }
-    }
-
-    function saveCompletedLevel(lvlNum) {
-      try {
-        const completed = getSavedCompletedLevels();
-        if (!completed.includes(lvlNum)) {
-          completed.push(lvlNum);
-          localStorage.setItem(STORAGE_KEY_COMPLETED, JSON.stringify(completed));
-        }
-      } catch (e) {}
-    }
-
-    function saveCurrentLevelIndex(idx) {
-      try {
-        localStorage.setItem(STORAGE_KEY_CURRENT, String(idx));
-      } catch (e) {}
-    }
-
-    function getSavedCurrentLevelIndex() {
-      try {
-        const val = localStorage.getItem(STORAGE_KEY_CURRENT);
-        if (val !== null) {
-          const parsed = parseInt(val, 10);
-          if (!isNaN(parsed) && parsed >= 0 && parsed < LEVELS.length) {
-            return parsed;
-          }
-        }
-      } catch (e) {}
-      return 0;
-    }
-
     let currentLevelIndex = 0;
     let partsState = [];
     let draggingPart = null;
-    let selectedPartId = null;
-    let touchState = null;
-    let mouseDragState = null;
     let silhouetteTimer = null;
     let riddleHintStage = 0;
     let activeHintPartId = null;
@@ -2562,10 +2521,6 @@
     const beaconLayer = document.getElementById('beacon-layer');
     const silhouetteEl = document.getElementById('silhouette-layer');
     const trayEl = document.getElementById('parts-tray');
-    const trayScrollContainer = document.getElementById('tray-scroll-container');
-    const trayScrollPrev = document.getElementById('tray-scroll-prev');
-    const trayScrollNext = document.getElementById('tray-scroll-next');
-    const trayCountBadge = document.getElementById('tray-count-badge');
     const ghostEl = document.getElementById('drag-ghost');
     const factDisplay = document.getElementById('fact-display');
     const hintBtn = document.getElementById('hint-btn');
@@ -2587,65 +2542,218 @@
       return isTouchDevice() ? -52 : 0;
     }
 
-    function updateTrayScrollIndicators() {
-      if (!trayEl || !trayScrollContainer) return;
-      const canScrollLeft = trayEl.scrollLeft > 6;
-      const canScrollRight = trayEl.scrollLeft < (trayEl.scrollWidth - trayEl.clientWidth - 6);
-
-      trayScrollContainer.classList.toggle('can-scroll-left', canScrollLeft);
-      trayScrollContainer.classList.toggle('can-scroll-right', canScrollRight);
-
-      if (trayScrollPrev) trayScrollPrev.classList.toggle('visible', canScrollLeft);
-      if (trayScrollNext) trayScrollNext.classList.toggle('visible', canScrollRight);
-    }
-
-    if (trayEl) {
-      trayEl.addEventListener('scroll', updateTrayScrollIndicators, { passive: true });
-      trayEl.addEventListener('wheel', (e) => {
-        if (trayEl.scrollWidth > trayEl.clientWidth) {
-          if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-            trayEl.scrollLeft += e.deltaY;
-            e.preventDefault();
-          }
-        }
-      }, { passive: false });
-    }
-
-    if (trayScrollPrev) {
-      trayScrollPrev.addEventListener('click', () => {
-        trayEl.scrollBy({ left: -160, behavior: 'smooth' });
-      });
-    }
-
-    if (trayScrollNext) {
-      trayScrollNext.addEventListener('click', () => {
-        trayEl.scrollBy({ left: 160, behavior: 'smooth' });
-      });
-    }
-
-    window.addEventListener('resize', updateTrayScrollIndicators, { passive: true });
-
     function refreshLevelDropdown() {
       const savedVal = levelSelect.value;
-      const completedList = getSavedCompletedLevels();
       levelSelect.innerHTML = '';
       LEVELS.forEach((lvl, idx) => {
         const rules = getLevelRules(lvl.levelNumber);
         const opt = document.createElement('option');
         opt.value = idx;
-        const isCompleted = completedList.includes(lvl.levelNumber);
-        const check = isCompleted ? '✓ ' : '';
         const displayName = rules.mysteryObject ? '??? (Mystery Object)' : lvl.name;
-        opt.textContent = `${check}Level ${lvl.levelNumber}: ${displayName}`;
+        opt.textContent = `Level ${lvl.levelNumber}: ${displayName}`;
         levelSelect.appendChild(opt);
       });
       if (savedVal !== '') levelSelect.value = savedVal;
     }
     refreshLevelDropdown();
 
+
+    const joeyAvatarWrap = document.getElementById('joey-avatar-svg-wrap');
+    const joeyAvatarBtn = document.getElementById('joey-avatar-btn');
+    const modalJoeyBox = document.getElementById('modal-joey-box');
+
+    // --- Joey Companion Character (from character.jpg sketch) ---
+    function createJoeySvg(size = 38, idPrefix = 'joey') {
+      return `
+        <svg id="${idPrefix}-svg" class="joey-character-svg" viewBox="0 0 110 135" width="${size}" height="${Math.round(size * 1.22)}" style="overflow:visible;" role="img" aria-label="Joey the apprentice">
+          <g class="joey-root" id="${idPrefix}-root" transform="translate(55, 68)">
+            <ellipse cx="0" cy="58" rx="26" ry="5.5" fill="rgba(15, 23, 42, 0.15)"/>
+
+            <g id="${idPrefix}-fx-lightbulb" style="display:none;">
+              <circle cx="28" cy="-56" r="8" fill="#facc15" stroke="#ca8a04" stroke-width="1.6"/>
+              <rect x="25" y="-48" width="6" height="4" rx="1" fill="#94a3b8"/>
+              <line x1="28" y1="-68" x2="28" y2="-65" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+              <line x1="38" y1="-62" x2="35" y2="-60" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+              <line x1="18" y1="-62" x2="21" y2="-60" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+            </g>
+            <g id="${idPrefix}-fx-question" style="display:none;">
+              <text x="22" y="-48" font-family="-apple-system, sans-serif" font-size="22" font-weight="900" fill="#ef4444">?</text>
+            </g>
+            <g id="${idPrefix}-fx-sparkles" style="display:none;">
+              <polygon points="30,-58 32,-52 38,-50 32,-48 30,-42 28,-48 22,-50 28,-52" fill="#fbbf24"/>
+              <polygon points="-28,-52 -26,-48 -22,-46 -26,-44 -28,-40 -30,-44 -34,-46 -30,-48" fill="#38bdf8"/>
+            </g>
+
+            <g class="joey-legs">
+              <path d="M -7 16 L -17 52 L -6 52 L -1 16 Z" fill="#2563eb" stroke="#1e293b" stroke-width="2.2" stroke-linejoin="round"/>
+              <ellipse cx="-12" cy="54" rx="8" ry="4" fill="#1e293b"/>
+              <path d="M 7 16 L 17 52 L 6 52 L 1 16 Z" fill="#2563eb" stroke="#1e293b" stroke-width="2.2" stroke-linejoin="round"/>
+              <ellipse cx="12" cy="54" rx="8" ry="4" fill="#1e293b"/>
+            </g>
+
+            <g class="joey-torso">
+              <path d="M -18 -10 L 18 -10 L 14 18 L -14 18 Z" fill="#f8fafc" stroke="#1e293b" stroke-width="2.2" stroke-linejoin="round"/>
+              <path d="M -7 -10 L 0 -1 L 7 -10" fill="none" stroke="#1e293b" stroke-width="1.8" stroke-linecap="round"/>
+              <circle cx="0" cy="4" r="2.2" fill="#1e293b"/>
+              <circle cx="0" cy="11" r="2.2" fill="#1e293b"/>
+              <line x1="-14" y1="18" x2="14" y2="18" stroke="#1e293b" stroke-width="1.8"/>
+            </g>
+
+            <g id="${idPrefix}-arms-normal">
+              <path d="M -16 -8 Q -30 8 -28 22" fill="none" stroke="#f8fafc" stroke-width="8" stroke-linecap="round"/>
+              <path d="M -16 -8 Q -30 8 -28 22" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="-28" cy="24" r="5" fill="#fde047" stroke="#1e293b" stroke-width="1.8"/>
+              <circle cx="-25" cy="21" r="2.2" fill="#fde047" stroke="#1e293b" stroke-width="1.4"/>
+              <path d="M 16 -8 Q 30 8 28 22" fill="none" stroke="#f8fafc" stroke-width="8" stroke-linecap="round"/>
+              <path d="M 16 -8 Q 30 8 28 22" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="28" cy="24" r="5" fill="#fde047" stroke="#1e293b" stroke-width="1.8"/>
+              <circle cx="25" cy="21" r="2.2" fill="#fde047" stroke="#1e293b" stroke-width="1.4"/>
+            </g>
+
+            <g id="${idPrefix}-arms-cheer" style="display:none;">
+              <path d="M -16 -8 Q -32 -26 -26 -36" fill="none" stroke="#f8fafc" stroke-width="8" stroke-linecap="round"/>
+              <path d="M -16 -8 Q -32 -26 -26 -36" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="-26" cy="-38" r="5" fill="#fde047" stroke="#1e293b" stroke-width="1.8"/>
+              <path d="M 16 -8 Q 32 -26 26 -36" fill="none" stroke="#f8fafc" stroke-width="8" stroke-linecap="round"/>
+              <path d="M 16 -8 Q 32 -26 26 -36" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="26" cy="-38" r="5" fill="#fde047" stroke="#1e293b" stroke-width="1.8"/>
+            </g>
+
+            <g id="${idPrefix}-arms-puzzled" style="display:none;">
+              <path d="M -16 -8 Q -28 12 -24 24" fill="none" stroke="#f8fafc" stroke-width="8" stroke-linecap="round"/>
+              <path d="M -16 -8 Q -28 12 -24 24" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="-24" cy="25" r="5" fill="#fde047" stroke="#1e293b" stroke-width="1.8"/>
+              <path d="M 16 -8 Q 28 -18 16 -38" fill="none" stroke="#f8fafc" stroke-width="8" stroke-linecap="round"/>
+              <path d="M 16 -8 Q 28 -18 16 -38" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="16" cy="-40" r="5" fill="#fde047" stroke="#1e293b" stroke-width="1.8"/>
+            </g>
+
+            <g class="joey-head-group">
+              <circle cx="0" cy="-26" r="19" fill="#fde047" stroke="#1e293b" stroke-width="2.2"/>
+              <circle cx="-11" cy="-22" r="3" fill="#f87171" opacity="0.45"/>
+              <circle cx="11" cy="-22" r="3" fill="#f87171" opacity="0.45"/>
+
+              <g id="${idPrefix}-eyes-happy">
+                <path d="M -10 -29 Q -6 -34 -2 -29" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M 2 -29 Q 6 -34 10 -29" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+              </g>
+              <g id="${idPrefix}-eyes-open" style="display:none;">
+                <circle cx="-6" cy="-29" r="3.2" fill="#1e293b"/>
+                <circle cx="-5" cy="-30.5" r="1.1" fill="#ffffff"/>
+                <circle cx="6" cy="-29" r="3.2" fill="#1e293b"/>
+                <circle cx="7" cy="-30.5" r="1.1" fill="#ffffff"/>
+              </g>
+              <g id="${idPrefix}-eyes-puzzled" style="display:none;">
+                <path d="M -10 -31 L -2 -28" fill="none" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="-6" cy="-27" r="2.5" fill="#1e293b"/>
+                <path d="M 2 -27 Q 6 -31 10 -27" fill="none" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+              </g>
+
+              <g id="${idPrefix}-mouth-wrap">
+                <path id="${idPrefix}-mouth-smile" d="M -7 -20 Q 0 -13 7 -20" fill="none" stroke="#1e293b" stroke-width="2.2" stroke-linecap="round"/>
+                <path id="${idPrefix}-mouth-cheer" d="M -7 -21 Q 0 -11 7 -21 Z" fill="#b91c1c" stroke="#1e293b" stroke-width="1.8" style="display:none;"/>
+                <path id="${idPrefix}-mouth-puzzled" d="M -6 -18 Q -2 -21 1 -18 Q 4 -16 7 -19" fill="none" stroke="#1e293b" stroke-width="2" stroke-linecap="round" style="display:none;"/>
+              </g>
+
+              <g class="joey-hair">
+                <path d="M -20 -28 C -22 -45 -5 -49 0 -49 C 7 -49 22 -45 20 -28 C 21 -21 19 -16 17 -15 C 15 -21 15 -25 13 -28 C 11 -24 9 -20 7 -25 C 5 -22 2 -19 0 -25 C -2 -20 -5 -22 -7 -26 C -9 -21 -12 -24 -14 -28 C -16 -25 -17 -20 -20 -28 Z" fill="#292524" stroke="#1e293b" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M -11 -43 Q -7 -37 -5 -41 M -2 -45 Q 0 -35 2 -41 M 5 -44 Q 9 -36 11 -42" stroke="#57534e" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+              </g>
+            </g>
+          </g>
+        </svg>
+      `;
+    }
+
+    let joeyMoodTimer = null;
+    function setJoeyMood(mood, prefixes = ['joey', 'modal-joey']) {
+      prefixes.forEach(prefix => {
+        const root = document.getElementById(`${prefix}-root`);
+        const armsNormal = document.getElementById(`${prefix}-arms-normal`);
+        const armsCheer = document.getElementById(`${prefix}-arms-cheer`);
+        const armsPuzzled = document.getElementById(`${prefix}-arms-puzzled`);
+        const eyesHappy = document.getElementById(`${prefix}-eyes-happy`);
+        const eyesOpen = document.getElementById(`${prefix}-eyes-open`);
+        const eyesPuzzled = document.getElementById(`${prefix}-eyes-puzzled`);
+        const mouthSmile = document.getElementById(`${prefix}-mouth-smile`);
+        const mouthCheer = document.getElementById(`${prefix}-mouth-cheer`);
+        const mouthPuzzled = document.getElementById(`${prefix}-mouth-puzzled`);
+        const fxLightbulb = document.getElementById(`${prefix}-fx-lightbulb`);
+        const fxQuestion = document.getElementById(`${prefix}-fx-question`);
+        const fxSparkles = document.getElementById(`${prefix}-fx-sparkles`);
+
+        if (!root) return;
+
+        const svgEl = document.getElementById(`${prefix}-svg`);
+        if (svgEl) {
+          svgEl.className = `joey-character-svg joey-mood-${mood}`;
+        }
+
+        [armsNormal, armsCheer, armsPuzzled, eyesHappy, eyesOpen, eyesPuzzled, mouthSmile, mouthCheer, mouthPuzzled, fxLightbulb, fxQuestion, fxSparkles].forEach(el => {
+          if (el) el.style.display = 'none';
+        });
+
+        if (mood === 'idle') {
+          if (armsNormal) armsNormal.style.display = 'block';
+          if (eyesHappy) eyesHappy.style.display = 'block';
+          if (mouthSmile) mouthSmile.style.display = 'block';
+        } else if (mood === 'curious') {
+          if (armsNormal) armsNormal.style.display = 'block';
+          if (eyesOpen) eyesOpen.style.display = 'block';
+          if (mouthSmile) mouthSmile.style.display = 'block';
+        } else if (mood === 'happy') {
+          if (armsCheer) armsCheer.style.display = 'block';
+          if (eyesHappy) eyesHappy.style.display = 'block';
+          if (mouthCheer) mouthCheer.style.display = 'block';
+          if (fxSparkles) fxSparkles.style.display = 'block';
+        } else if (mood === 'puzzled') {
+          if (armsPuzzled) armsPuzzled.style.display = 'block';
+          if (eyesPuzzled) eyesPuzzled.style.display = 'block';
+          if (mouthPuzzled) mouthPuzzled.style.display = 'block';
+          if (fxQuestion) fxQuestion.style.display = 'block';
+        } else if (mood === 'thinking') {
+          if (armsPuzzled) armsPuzzled.style.display = 'block';
+          if (eyesHappy) eyesHappy.style.display = 'block';
+          if (mouthSmile) mouthSmile.style.display = 'block';
+          if (fxLightbulb) fxLightbulb.style.display = 'block';
+        } else if (mood === 'celebrate') {
+          if (armsCheer) armsCheer.style.display = 'block';
+          if (eyesHappy) eyesHappy.style.display = 'block';
+          if (mouthCheer) mouthCheer.style.display = 'block';
+          if (fxSparkles) fxSparkles.style.display = 'block';
+        }
+      });
+
+      clearTimeout(joeyMoodTimer);
+      if (mood === 'happy' || mood === 'puzzled' || mood === 'thinking' || mood === 'spin') {
+        joeyMoodTimer = setTimeout(() => {
+          setJoeyMood('idle');
+        }, mood === 'happy' ? 2400 : 3000);
+      }
+    }
+
+    const JOEY_QUOTES = [
+      "Hi! I'm Joey! Let's build something awesome!",
+      "I love engineering! Every part has a special purpose!",
+      "Need a clue? Tap that Hint button anytime!",
+      "You've got this, Junior Engineer! Keep assembling!",
+      "Did you know? Pencils, hammers, and rockets all follow physics!"
+    ];
+    let joeyQuoteIdx = 0;
+
+    function triggerJoeyTap() {
+      setJoeyMood('spin');
+      playSound('pickup');
+      const quote = JOEY_QUOTES[joeyQuoteIdx % JOEY_QUOTES.length];
+      joeyQuoteIdx++;
+      showFact(`👋 Joey: "${quote}"`);
+      setTimeout(() => {
+        setJoeyMood('happy');
+      }, 650);
+    }
+
     function loadLevel(index) {
       currentLevelIndex = Math.max(0, Math.min(LEVELS.length - 1, index));
-      saveCurrentLevelIndex(currentLevelIndex);
       const level = LEVELS[currentLevelIndex];
       const rules = getLevelRules(level.levelNumber);
 
@@ -2654,12 +2762,8 @@
       riddleHintStage = 0;
       activeHintPartId = null;
       failedAttempts = 0;
-      selectedPartId = null;
-      draggingPart = null;
-      touchState = null;
-      mouseDragState = null;
-      ghostEl.style.display = 'none';
       beaconLayer.innerHTML = '';
+      setJoeyMood('idle');
 
       levelSelect.value = currentLevelIndex;
       prevLevelBtn.disabled = currentLevelIndex === 0;
@@ -2712,9 +2816,6 @@
       renderTray(rules);
       updateProgress();
 
-      if (trayEl) trayEl.scrollLeft = 0;
-      setTimeout(updateTrayScrollIndicators, 120);
-
       if (rules.roomScavenger) {
         showFact(`🔍 New Room Layout: Find the ${level.parts.length} parts hidden around the bedroom and drag them onto the mat!`, false);
       } else if (rules.mysteryObject) {
@@ -2732,7 +2833,7 @@
         hintBtn.textContent = '💡 No Hint';
         ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span class="rule-text-detail">Silhouette visible • Any order • Pre-aligned</span>`;
         trayTitleText.textContent = 'Component Tray';
-        trayHelperText.textContent = 'Drag or tap a part onto its matching outline.';
+        trayHelperText.textContent = 'Drag each part onto its matching outline.';
       } else if (rules.hintMode === 'peek') {
         silhouetteEl.classList.remove('silhouette-visible');
         silhouetteEl.classList.add('silhouette-hidden');
@@ -2748,7 +2849,7 @@
         hintBtn.textContent = '🧭 Angles';
         ruleSummary.innerHTML = `<span class="rule-pill">${rules.tierName}</span><span class="rule-text-detail">Random angles • Tap part or ↻ to rotate</span>`;
         trayTitleText.textContent = 'Component Tray';
-        trayHelperText.textContent = 'Tap a part or ↻ to rotate to 0° before placing!';
+        trayHelperText.textContent = 'Tap a part or ↻ to rotate to 0° before dragging!';
       } else if (rules.hintMode === 'next') {
         silhouetteEl.classList.remove('silhouette-visible');
         silhouetteEl.classList.add('silhouette-hidden');
@@ -2778,13 +2879,16 @@
 
     function showFact(text, mode = false) {
       if (mode === true || mode === 'warning') {
-        factDisplay.className = 'fact-banner warning';
+        factDisplay.className = 'fact-banner joey-speech-bubble warning';
+        setJoeyMood('puzzled');
       } else if (mode === 'riddle') {
-        factDisplay.className = 'fact-banner riddle';
+        factDisplay.className = 'fact-banner joey-speech-bubble riddle';
+        setJoeyMood('thinking');
       } else if (mode === 'super-hint') {
-        factDisplay.className = 'fact-banner super-hint';
+        factDisplay.className = 'fact-banner joey-speech-bubble super-hint';
+        setJoeyMood('thinking');
       } else {
-        factDisplay.className = 'fact-banner';
+        factDisplay.className = 'fact-banner joey-speech-bubble';
       }
       factDisplay.innerHTML = `<span>${text}</span>`;
     }
@@ -2826,7 +2930,7 @@
       renderTray(rules);
 
       const spotText = targetPiece.spotClue ? ` (${targetPiece.spotClue})` : '';
-      showFact(`🎯 Hint (5 tries): "${targetPiece.name}" highlighted${spotText} — drop or tap on gold target!`, 'super-hint');
+      showFact(`🎯 Hint (5 tries): "${targetPiece.name}" highlighted${spotText} — drop on gold target!`, 'super-hint');
     }
 
     function updateProgress() {
@@ -2834,18 +2938,13 @@
       const total = partsState.length;
       progressText.textContent = `${placedCount} / ${total} Assembled`;
       progressFill.style.width = `${(placedCount / total) * 100}%`;
-      if (trayCountBadge) {
-        trayCountBadge.textContent = `${placedCount} / ${total}`;
-      }
 
       if (placedCount === total) {
         beaconLayer.innerHTML = '';
         playSound('win');
+        setJoeyMood('celebrate');
         const level = LEVELS[currentLevelIndex];
         const rules = getLevelRules(level.levelNumber);
-
-        saveCompletedLevel(level.levelNumber);
-        refreshLevelDropdown();
 
         if (rules.mysteryObject) {
           const titleEl = document.getElementById('object-title');
@@ -2883,60 +2982,32 @@
         g.dataset.id = part.id;
 
         g.innerHTML = `
-          <g transform="translate(${part.roomX || 400}, ${part.roomY || 200}) scale(0.76) translate(${-part.targetX}, ${-part.targetY})">
+          <g transform="translate(${part.roomX}, ${part.roomY}) scale(0.76) translate(${-part.targetX}, ${-part.targetY})">
             ${part.boardSvg}
           </g>
         `;
-        // Room parts start drag directly on interaction
-        g.addEventListener('pointerdown', (e) => {
-          if (e.pointerType === 'mouse' && e.button !== 0) return;
-          e.preventDefault();
-          e.stopPropagation();
-          draggingPart = part;
-          selectedPartId = part.id;
-          createGhostSvg(part);
-          ghostEl.style.display = 'block';
-          playSound('pickup');
-          updateGhostPosition(e.clientX, e.clientY);
-        });
+        g.addEventListener('pointerdown', (e) => startDrag(e, part));
         roomScatterLayer.appendChild(g);
       });
     }
 
     function renderTray(rules = getLevelRules(LEVELS[currentLevelIndex].levelNumber)) {
       trayEl.innerHTML = '';
-      const placedCount = partsState.filter(p => p.placed).length;
-      const totalCount = partsState.length;
-      if (trayCountBadge) {
-        trayCountBadge.textContent = `${placedCount} / ${totalCount}`;
-      }
-
       partsState.forEach(part => {
         const slot = document.createElement('div');
-        const isSelected = selectedPartId === part.id;
 
         if (rules.roomScavenger) {
-          slot.className = 'part-slot room-checklist-slot' + (part.placed ? ' placed' : '') + (part.highlightHint ? ' hint-highlight' : '') + (isSelected ? ' selected' : '');
+          slot.className = 'part-slot room-checklist-slot' + (part.placed ? ' placed' : '') + (part.highlightHint ? ' hint-highlight' : '');
           const label = document.createElement('div');
           label.className = 'part-label';
           label.textContent = part.placed ? `✓ ${part.name}` : `🔍 ${part.name}`;
           slot.appendChild(label);
-          slot.dataset.id = part.id;
-          slot.tabIndex = part.placed ? -1 : 0;
-          slot.setAttribute('role', 'button');
-          slot.setAttribute('aria-label', `${part.name}${part.placed ? ' (placed)' : ''}`);
-          if (!part.placed) {
-            slot.addEventListener('click', () => toggleSelectPart(part.id));
-          }
           trayEl.appendChild(slot);
           return;
         }
 
-        slot.className = 'part-slot' + (part.placed ? ' placed' : '') + (part.highlightHint ? ' hint-highlight' : '') + (isSelected ? ' selected' : '');
+        slot.className = 'part-slot' + (part.placed ? ' placed' : '') + (part.highlightHint ? ' hint-highlight' : '');
         slot.dataset.id = part.id;
-        slot.tabIndex = part.placed ? -1 : 0;
-        slot.setAttribute('role', 'button');
-        slot.setAttribute('aria-label', `${part.name}${part.placed ? ' (placed)' : ''}`);
 
         if (!part.placed && part.showAngleHint) {
           const turnsNeeded = ((360 - part.rotation) % 360) / 90;
@@ -2964,6 +3035,45 @@
         preview.style.transform = `rotate(${part.rotation}deg)`;
         preview.innerHTML = `
           <svg viewBox="${part.previewBox}" width="80" height="46" style="overflow:visible;">
+            <defs>
+              <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#bae6fd" stop-opacity="0.72" />
+                <stop offset="100%" stop-color="#7dd3fc" stop-opacity="0.78" />
+              </linearGradient>
+              <linearGradient id="steelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#e2e8f0" />
+                <stop offset="50%" stop-color="#94a3b8" />
+                <stop offset="100%" stop-color="#475569" />
+              </linearGradient>
+              <linearGradient id="woodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#d97706" />
+                <stop offset="100%" stop-color="#78350f" />
+              </linearGradient>
+              <linearGradient id="yellowBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#fde047" />
+                <stop offset="100%" stop-color="#ca8a04" />
+              </linearGradient>
+              <linearGradient id="flashlightBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#3b82f6" />
+                <stop offset="100%" stop-color="#1e3a8a" />
+              </linearGradient>
+              <linearGradient id="beamBulbGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#fef08a" />
+                <stop offset="100%" stop-color="#f59e0b" />
+              </linearGradient>
+              <linearGradient id="guitarBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ea580c" />
+                <stop offset="100%" stop-color="#7c2d12" />
+              </linearGradient>
+              <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fde68a" />
+                <stop offset="100%" stop-color="#a16207" />
+              </linearGradient>
+              <linearGradient id="redPaintGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#f87171" />
+                <stop offset="100%" stop-color="#991b1b" />
+              </linearGradient>
+            </defs>
             ${part.previewSvg}
           </svg>
         `;
@@ -2975,22 +3085,11 @@
         slot.appendChild(label);
 
         if (!part.placed) {
-          slot.addEventListener('pointerdown', (e) => handleSlotPointerDown(e, part));
-          slot.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              toggleSelectPart(part.id);
-            } else if ((e.key === 'r' || e.key === 'R') && rules.randomRotation) {
-              e.preventDefault();
-              rotatePart(part.id);
-            }
-          });
+          slot.addEventListener('pointerdown', (e) => startDrag(e, part));
         }
 
         trayEl.appendChild(slot);
       });
-
-      updateTrayScrollIndicators();
     }
 
     function rotatePart(partId) {
@@ -2999,56 +3098,20 @@
       part.rotation = (part.rotation + 90) % 360;
       playSound('rotate');
       renderTray();
-      updateTrayScrollIndicators();
     }
 
-    function toggleSelectPart(partId) {
-      const part = partsState.find(p => p.id === partId);
-      if (!part || part.placed) return;
-      const rules = getLevelRules(LEVELS[currentLevelIndex].levelNumber);
+    let pointerDownPos = { x: 0, y: 0 };
+    let hasMoved = false;
 
-      if (selectedPartId === partId) {
-        if (rules.randomRotation) {
-          rotatePart(partId);
-          return;
-        }
-        selectedPartId = null;
-        showFact(`🔧 Drag or tap any component to start building!`);
-      } else {
-        selectedPartId = partId;
-        playSound('pickup');
-        const spotText = part.spotClue ? ` (${part.spotClue})` : '';
-        showFact(`👉 ${part.name} selected! Tap its spot on the workbench or drag into place.${spotText}`);
-      }
-      renderTray(rules);
-    }
+    function startDrag(e, part) {
+      if (part.placed) return;
+      if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
+      e.preventDefault();
+      e.stopPropagation();
+      draggingPart = part;
+      pointerDownPos = { x: e.clientX, y: e.clientY };
+      hasMoved = false;
 
-    // Tap-to-Place on Workbench SVG
-    svgEl.addEventListener('click', (e) => {
-      if (!selectedPartId || draggingPart) return;
-      const part = partsState.find(p => p.id === selectedPartId);
-      if (!part || part.placed) return;
-
-      const ctm = svgEl.getScreenCTM();
-      if (!ctm) return;
-      const pt = svgEl.createSVGPoint();
-      pt.x = e.clientX;
-      pt.y = e.clientY;
-      const svgCoords = pt.matrixTransform(ctm.inverse());
-
-      const dist = Math.hypot(svgCoords.x - part.targetX, svgCoords.y - part.targetY);
-      const rules = getLevelRules(LEVELS[currentLevelIndex].levelNumber);
-      const allowedTapRadius = Math.max(120, part.snapRadius * 1.5);
-
-      if (dist <= allowedTapRadius) {
-        attemptSnap(part, rules);
-        selectedPartId = null;
-      } else {
-        showFact(`Target is closer to the ${part.spotClue || 'blueprint outline'}. Tap closer or drag into place!`, 'warning');
-      }
-    });
-
-    function createGhostSvg(part) {
       const boardRect = svgEl.getBoundingClientRect();
       ghostEl.innerHTML = `
         <svg viewBox="0 0 800 380" width="${boardRect.width}" height="${boardRect.height}" style="overflow:visible;">
@@ -3057,143 +3120,46 @@
           </g>
         </svg>
       `;
+      updateGhostPosition(e.clientX, e.clientY);
     }
 
     function updateGhostPosition(clientX, clientY) {
       if (!draggingPart) return;
-      const offsetY = getTouchOffsetY();
-      ghostEl.style.left = `${clientX}px`;
-      ghostEl.style.top = `${clientY + offsetY}px`;
-    }
-
-    function handleSlotPointerDown(e, part) {
-      if (part.placed) return;
-      if (e.pointerType === 'mouse' && e.button !== 0) return;
-
-      if (e.pointerType === 'touch') {
-        // DO NOT preventDefault on touch start — allows hardware momentum scroll
-        touchState = {
-          part,
-          startX: e.clientX,
-          startY: e.clientY,
-          isDragging: false,
-          isScrolling: false
-        };
-      } else {
-        // Mouse start
-        mouseDragState = {
-          part,
-          startX: e.clientX,
-          startY: e.clientY,
-          isDragging: false
-        };
+      const moveThreshold = isTouchDevice() ? 5 : 6;
+      const dist = Math.hypot(clientX - pointerDownPos.x, clientY - pointerDownPos.y);
+      if (dist > moveThreshold && !hasMoved) {
+        hasMoved = true;
+        ghostEl.style.display = 'block';
+        playSound('pickup');
+        setJoeyMood('curious');
+      }
+      if (hasMoved) {
+        const offsetY = getTouchOffsetY();
+        ghostEl.style.left = `${clientX}px`;
+        ghostEl.style.top = `${clientY + offsetY}px`;
       }
     }
 
     window.addEventListener('pointermove', (e) => {
-      // Touch handling: disambiguate horizontal swipe (scroll) vs upward drag
-      if (touchState) {
-        if (touchState.isScrolling) return;
-
-        if (touchState.isDragging) {
-          if (e.cancelable) e.preventDefault();
-          updateGhostPosition(e.clientX, e.clientY);
-          return;
-        }
-
-        const dx = e.clientX - touchState.startX;
-        const dy = e.clientY - touchState.startY;
-
-        // User is scrolling horizontally across the subparts tray
-        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6) {
-          touchState.isScrolling = true;
-          return;
-        }
-
-        // User is lifting the part upward towards the workbench
-        if (dy < -10 || (Math.abs(dy) > Math.abs(dx) + 4 && Math.abs(dy) > 10)) {
-          touchState.isDragging = true;
-          draggingPart = touchState.part;
-          createGhostSvg(draggingPart);
-          ghostEl.style.display = 'block';
-          playSound('pickup');
-          if (e.cancelable) e.preventDefault();
-          updateGhostPosition(e.clientX, e.clientY);
-        }
-        return;
-      }
-
-      // Mouse drag handling
-      if (mouseDragState) {
-        if (mouseDragState.isDragging) {
-          updateGhostPosition(e.clientX, e.clientY);
-          return;
-        }
-        const dist = Math.hypot(e.clientX - mouseDragState.startX, e.clientY - mouseDragState.startY);
-        if (dist > 5) {
-          mouseDragState.isDragging = true;
-          draggingPart = mouseDragState.part;
-          createGhostSvg(draggingPart);
-          ghostEl.style.display = 'block';
-          playSound('pickup');
-          updateGhostPosition(e.clientX, e.clientY);
-        }
-        return;
-      }
-
-      // Direct dragging (e.g. room mode)
-      if (draggingPart && !touchState && !mouseDragState) {
-        if (e.pointerType === 'touch' && e.cancelable) e.preventDefault();
-        updateGhostPosition(e.clientX, e.clientY);
-      }
+      if (!draggingPart) return;
+      if (e.pointerType === 'touch') e.preventDefault();
+      updateGhostPosition(e.clientX, e.clientY);
     }, { passive: false });
 
     window.addEventListener('pointerup', (e) => {
-      if (touchState) {
-        const state = touchState;
-        touchState = null;
-
-        if (state.isDragging) {
-          handleDrop(e, state.part);
-        } else if (!state.isScrolling) {
-          // Clean tap on part
-          toggleSelectPart(state.part.id);
-        }
-        return;
-      }
-
-      if (mouseDragState) {
-        const state = mouseDragState;
-        mouseDragState = null;
-
-        if (state.isDragging) {
-          handleDrop(e, state.part);
-        } else {
-          // Clean click on part
-          toggleSelectPart(state.part.id);
-        }
-        return;
-      }
-
-      if (draggingPart) {
-        const part = draggingPart;
-        draggingPart = null;
-        ghostEl.style.display = 'none';
-        handleDrop(e, part);
-      }
-    });
-
-    window.addEventListener('pointercancel', () => {
-      touchState = null;
-      mouseDragState = null;
+      if (!draggingPart) return;
+      const part = draggingPart;
       draggingPart = null;
       ghostEl.style.display = 'none';
-    });
 
-    function handleDrop(e, part) {
-      ghostEl.style.display = 'none';
-      draggingPart = null;
       const rules = getLevelRules(LEVELS[currentLevelIndex].levelNumber);
+
+      if (!hasMoved) {
+        if (rules.randomRotation) {
+          rotatePart(part.id);
+        }
+        return;
+      }
 
       const ctm = svgEl.getScreenCTM();
       if (!ctm) return;
@@ -3212,11 +3178,12 @@
       } else {
         registerFailedAttempt(rules, `Not quite! Try positioning the ${part.name} closer to where it connects.`);
       }
-    }
+    });
 
     function registerFailedAttempt(rules, defaultMessage) {
       failedAttempts++;
       playSound('error');
+      setJoeyMood('puzzled');
       if (failedAttempts >= 5) {
         triggerConclusiveHint(rules);
       } else {
@@ -3248,10 +3215,6 @@
       part.highlightHint = false;
       part.showAngleHint = false;
 
-      if (selectedPartId === part.id) {
-        selectedPartId = null;
-      }
-
       if (activeHintPartId === part.id) {
         riddleHintStage = 0;
         activeHintPartId = null;
@@ -3261,6 +3224,7 @@
       }
 
       playSound('snap');
+      setJoeyMood('happy');
 
       const layer = document.getElementById(part.zLayer);
       const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -3272,18 +3236,6 @@
       if (rules.roomScavenger) renderRoomScatter();
       renderTray(rules);
       updateProgress();
-      updateTrayScrollIndicators();
-
-      // Smoothly bring the next unplaced part into view in the tray
-      const nextUnplaced = partsState.find(p => !p.placed);
-      if (nextUnplaced && trayEl) {
-        const nextSlot = trayEl.querySelector(`[data-id="${nextUnplaced.id}"]`);
-        if (nextSlot) {
-          setTimeout(() => {
-            nextSlot.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-          }, 100);
-        }
-      }
     }
 
     hintBtn.addEventListener('click', () => {
@@ -3349,7 +3301,24 @@
       loadLevel(nextIdx);
     });
 
-    loadLevel(getSavedCurrentLevelIndex());
+    if (joeyAvatarWrap) {
+      joeyAvatarWrap.innerHTML = createJoeySvg(36, 'joey');
+    }
+    if (modalJoeyBox) {
+      modalJoeyBox.innerHTML = createJoeySvg(82, 'modal-joey');
+    }
+    if (joeyAvatarBtn) {
+      joeyAvatarBtn.addEventListener('click', triggerJoeyTap);
+      joeyAvatarBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          triggerJoeyTap();
+        }
+      });
+    }
+    setJoeyMood('idle');
+
+    loadLevel(0);
   </script>
 </body>
 </html>
